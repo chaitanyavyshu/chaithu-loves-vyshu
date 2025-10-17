@@ -1,0 +1,2920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Love upon Vyshu </title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Great+Vibes&family=Poppins:wght@300;400;600&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/Draggable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <style>
+        html { scroll-behavior: smooth; }
+        /* --- UPDATED BODY with default gradient --- */
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: #581c37; /* Deep Rose for text */
+            overflow: hidden; /* Prevent body scrolling for app-like feel */
+            background: linear-gradient(-45deg, #fce7f3, #ffe4e6, #fff1f2, #fdf2f8);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            transition: background-image 1s ease-in-out; /* Smooth transition for background change */
+        }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* --- ADDED: Class for GIF background on login page --- */
+        body.gif-background {
+            background-image: 
+                linear-gradient(rgba(252, 231, 243, 0.5), rgba(255, 228, 230, 0.7)), /* Semi-transparent pink overlay */
+                url('proposal.gif'); /* UPDATED GIF */
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            animation: none; /* Turn off gradient animation when GIF is shown */
+        }
+
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .font-great-vibes { font-family: 'Great Vibes', cursive; }
+        .font-lora { font-family: 'Lora', serif; }
+        .font-dancing-script { font-family: 'Dancing Script', cursive; }
+
+        /* --- Page Structure & Transitions --- */
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-top: 100px; 
+            padding-bottom: 80px; /* Space for footer */
+        }
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #app-header { z-index: 50; }
+        #app-footer { z-index: 50; }
+        #login-overlay { z-index: 100; }
+        #confirmation-modal { z-index: 200; }
+        .hidden { display: none; }
+        .loader { border: 4px solid #f9a8d4; border-top: 4px solid #db2777; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Advanced Login Screen --- */
+        #login-overlay { background: none; } /* Uses body gradient */
+        #password-input { background: rgba(255,255,255,0.2); border-color: rgba(236, 72, 153, 0.3); color: #831843; }
+        #password-input:focus { box-shadow: 0 0 25px rgba(236, 72, 153, 0.7); border-color: #db2777; }
+        #login-title { text-shadow: 0 2px 20px rgba(219, 39, 119, 0.5); }
+
+        /* --- Animated Background Effects --- */
+        #particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
+        .particle { position: absolute; font-size: 20px; color: rgba(236, 72, 153, 0.3); opacity: 0; animation: drift 20s infinite linear; }
+        @keyframes drift {
+            from { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+            to { transform: translateY(-120vh) translateX(50vw) rotate(720deg); opacity: 0; }
+        }
+
+        /* --- ADVANCED Header & Footer --- */
+        #app-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        nav a { 
+            position: relative;
+            transition: color 0.3s, text-shadow 0.3s; 
+            color: #9d174d; 
+            padding: 5px 0;
+        }
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background-color: #db2777;
+            transition: width 0.4s ease;
+        }
+        nav a.nav-active, nav a:hover { 
+            color: #db2777; 
+            text-shadow: 0 0 10px rgba(219, 39, 119, 0.5); 
+        }
+        nav a.nav-active::after, nav a:hover::after {
+            width: 100%;
+        }
+        #app-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #831843;
+        }
+        
+        /* --- HOME PAGE ANIMATION --- */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        #welcome > div {
+             /* A subtle float makes the page feel more alive */
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* NEW: Advanced Countdown Styles */
+        #countdown {
+            gap: 0.75rem;
+        }
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.3);
+            min-width: 80px;
+        }
+        .countdown-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            line-height: 1;
+            font-weight: 700;
+            color: #831843;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+        }
+        .countdown-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #9d174d;
+        }
+
+        /* --- Moments Page Tabs --- */
+        #moments-tabs {
+            border-bottom: 2px solid rgba(219, 39, 119, 0.2);
+            margin-bottom: 2rem;
+        }
+        .moment-tab-btn {
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: #9d174d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .moment-tab-btn:hover {
+            color: #db2777;
+        }
+        .moment-tab-btn.active {
+            color: #db2777;
+            border-bottom-color: #db2777;
+        }
+        .moments-tab-content {
+            display: none;
+        }
+        .moments-tab-content.active {
+            display: block;
+        }
+
+        /* --- Moments Page: Polaroid Gallery (Heart Shape) --- */
+        #moments-gallery {
+            perspective: 1000px;
+            max-width: 600px; /* Constrain heart shape */
+            height: 550px;
+            /* FIXED: Added margin-top to prevent overlap with heading */
+            margin-top: 2rem; 
+        }
+        .moment-photo {
+            position: absolute;
+            width: 120px; /* Smaller photos for heart shape */
+            padding: 8px 8px 40px 8px;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+        .moment-photo:hover {
+            transform: scale(1.2) !important; /* Override GSAP transform for hover */
+            z-index: 10;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .moment-photo img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+        .moment-photo p {
+            position: absolute;
+            bottom: 5px;
+            left: 8px;
+            right: 8px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1rem;
+            color: #581c37;
+            text-align: center;
+        }
+        #lightbox-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+        }
+        #lightbox-content {
+            max-width: 90vw;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        #lightbox-content img {
+            max-width: 100%;
+            max-height: 75vh;
+            border-radius: 10px;
+            box-shadow: 0 0 50px rgba(255,255,255,0.2);
+        }
+        #lightbox-content p {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: white;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* --- Moments Page: Photo Grid (IMPROVED with 3D Hover) --- */
+        #photo-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            perspective: 1500px;
+        }
+        .photo-grid-heading {
+            grid-column: 1 / -1; /* Span full width */
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #831843;
+            margin: 2rem 0 1rem;
+            text-align: left;
+            border-bottom: 2px solid rgba(219, 39, 119, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        .grid-photo-item {
+            position: relative;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            cursor: pointer;
+            aspect-ratio: 4/5;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+        .grid-photo-item:hover {
+            transform: translateZ(40px);
+        }
+        .grid-photo-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 1rem;
+            transform: translateZ(20px);
+        }
+        .grid-photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease-out;
+        }
+        .grid-photo-item:hover img {
+            transform: scale(1.1);
+        }
+        .grid-photo-item::before { /* Romantic overlay */
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to top, rgba(131, 24, 67, 0.6) 0%, rgba(219, 39, 119, 0.2) 50%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            border-radius: 1rem;
+            z-index: 1;
+        }
+        .grid-photo-item:hover::before {
+            opacity: 1;
+        }
+        .grid-photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: white;
+            padding: 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            transform: translateY(100%);
+            transition: transform 0.4s ease-out;
+            z-index: 2;
+        }
+        .grid-photo-item:hover .grid-photo-caption {
+            transform: translateY(0);
+        }
+
+
+        /* --- DREAMS PAGE (New Section) --- */
+        #dreams-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+            max-width: 900px;
+            margin: 2rem auto 0 auto;
+        }
+        .dream-section {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 32px 0 rgba(131, 24, 67, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .dream-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #831843;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .dream-list li {
+            padding-left: 1.5rem;
+            position: relative;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        .dream-list li.completed {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+        .dream-list li.completed::before {
+            content: '✅';
+        }
+        .dream-list li::before {
+            content: '✈️';
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        /* --- DREAMS PAGE: REVISED Notice Board --- */
+        #dream-jar-wrapper {
+            height: auto;
+            min-height: 400px;
+            position: relative;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .notice-board {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            min-height: 350px;
+            background: #fdf2f8;
+            border: 10px solid #e8c2d1;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 10px 25px rgba(88, 28, 135, 0.2), inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        .dream-note {
+            position: absolute;
+            background: #fffbeb; /* Creamy yellow for notes */
+            padding: 8px 12px;
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+            font-family: 'Great Vibes', cursive;
+            color: #831843;
+            font-size: 1.2rem;
+            cursor: default;
+            white-space: nowrap;
+            opacity: 0;
+            will-change: transform, opacity;
+            border-bottom: 1px solid #fde68a;
+        }
+        .dream-note::before { /* The Pin */
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            background: #f43f5e; /* Red pin head */
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            border: 2px solid white;
+        }
+        
+        #dream-input {
+            background: rgba(255,255,255,0.5);
+            border-color: rgba(236, 72, 153, 0.3);
+            color: #831843;
+            flex-grow: 1;
+            padding: 0.75rem 1rem;
+            border-radius: 99px;
+            border-width: 1px;
+            transition: all 0.3s ease;
+        }
+        #dream-input:focus {
+            outline: none;
+            box-shadow: 0 0 15px rgba(236, 72, 153, 0.5);
+            border-color: #db2777;
+        }
+        #add-dream-btn {
+            background-color: #db2777;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            box-shadow: 0 4px 10px rgba(219, 39, 119, 0.3);
+            transition: all 0.2s ease;
+        }
+        #add-dream-btn:hover {
+            background-color: #be185d;
+            transform: scale(1.05);
+        }
+
+        /* --- Moments Surprise Modal --- */
+        #moments-surprise-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        #moments-surprise-modal .modal-box {
+            background: white;
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        #moments-surprise-modal .modal-box .close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #db2777;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* --- NEW: LETTER PAGE STYLES (ENVELOPE) --- */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 320px; 
+        }
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            background-color: #f7d9e3; /* Light pink envelope body */
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.6s ease-in-out;
+            transform-style: preserve-3d;
+        }
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, #f7d9e3, #e8c2d1);
+            border-radius: 8px;
+        }
+        .flap {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: #f2cddb; /* Slightly darker flap */
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            transform-origin: top;
+            transition: transform 0.5s ease-in-out;
+        }
+        .flap::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            clip-path: polygon(0% 0%, 100% 0%, 50% 50%);
+            background-image: linear-gradient(to bottom, #f2cddb, #e6b7c9);
+        }
+        .seal {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background-color: #c13b6b; /* Deep pink seal */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+        .envelope-wrapper:hover .seal {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        .envelope-wrapper.open .flap {
+            transform: rotateX(180deg);
+        }
+        .envelope-wrapper.open .seal {
+            opacity: 0;
+        }
+        .letter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .letter-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .letter-content-full {
+            background: #fffafc;
+            padding: 40px 50px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            max-width: 90vw;
+            width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.5s ease;
+        }
+        .letter-modal.show .letter-content-full {
+            transform: scale(1);
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 2.5rem;
+            color: #888;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        .close-button:hover {
+            color: #333;
+        }
+
+        /* --- ENHANCED Question Section --- */
+        #question {
+            background: url('https://images.unsplash.com/photo-1532356884227-66d7c0e9e084?auto=format&fit=crop&w=2070&q=80') no-repeat center center;
+            box-shadow: inset 0 0 150px 50px rgba(0,0,0,0.5);
+            animation: zoomInBg 40s infinite alternate;
+        }
+        @keyframes zoomInBg {
+            from { background-size: 100% 100%; }
+            to { background-size: 120% 120%; }
+        }
+        .question-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle, rgba(131, 24, 67, 0.5) 0%, rgba(88, 28, 135, 0.6) 100%); }
+        .question-content { position: relative; z-index: 2; }
+        #ring-box-svg {
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        .box-lid { transition: transform 0.5s ease-in-out; transform-origin: bottom center; }
+        #ring-box-svg.open .box-lid { transform: rotateX(-140deg); }
+        .ring { transition: transform 0.5s 0.2s ease-out, opacity 0.5s 0.2s ease-out; transform: translateY(20px); opacity: 0; }
+        #ring-box-svg.open .ring { transform: translateY(0); opacity: 1; }
+        #proposal-question { text-shadow: 0 0 15px rgba(255, 255, 255, 0.7), 0 0 5px rgba(255, 200, 200, 0.5); }
+        .char { display: inline-block; }
+        .starburst-particle {
+            position: fixed; /* Use fixed positioning */
+            background-color: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 300; /* Ensure it's on top */
+        }
+
+        #yesBtn { animation: pulse 2s infinite ease-in-out; }
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(255,255,255,0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        }
+        
+        /* --- UPDATED No Button --- */
+        #noBtn {
+            transition: all 0.3s ease;
+        }
+        #no-btn-message {
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: #831843;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #confirmation-modal { opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s ease; }
+        #confirmation-modal .modal-box { /* NEW: Class for elegant modal content */
+            background: linear-gradient(135deg, #fff1f2 0%, #fce7f3 100%);
+            text-align: center;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            position: relative;
+            border: 1px solid white;
+        }
+        #modal-content { position: relative; }
+        #close-modal-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: #db2777;
+            color: white;
+            border-radius: 50%;
+            border: 2px solid white;
+            font-size: 1.2rem;
+            line-height: 1;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* --- GAME PAGE STYLES --- */
+        .game-menu-button {
+            background-color: #db2777;
+            color: white;
+            font-weight: bold;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4);
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+        .game-menu-button:hover {
+            transform: scale(1.05);
+            background-color: #be185d;
+        }
+        .game-container {
+            display: none; /* Hidden by default */
+        }
+        .back-to-games-btn {
+            background-color: rgba(255,255,255,0.8);
+            backdrop-filter: blur(5px);
+            padding: 0.5rem 1rem;
+            border-radius: 99px;
+            color: #831843;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            margin-bottom: 1rem;
+        }
+        .back-to-games-btn:hover {
+            background-color: white;
+            transform: scale(1.05);
+        }
+        
+        /* Game 1: Catch the Stars */
+        #catch-the-stars-game #game-canvas {
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(131, 24, 67, 0.2);
+            cursor: none;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            display: block; /* Center canvas */
+            margin: 0 auto; /* Center canvas */
+        }
+        #catch-the-stars-game .game-instructions {
+            background: rgba(255,255,255,0.3);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(131, 24, 67, 0.1);
+        }
+        #catch-the-stars-game #play-again-btn {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        /* --- UPDATED: Spin the Wheel Game Styles --- */
+        #wheel-container {
+            position: relative;
+            width: 350px;
+            height: 350px;
+            margin: 1rem auto;
+        }
+        #wheel-canvas {
+            transition: transform 5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        #wheel-pointer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 30px solid #db2777;
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+            z-index: 10;
+        }
+        #spin-btn { margin-top: 1rem; }
+        #wheel-result-modal {
+            z-index: 1600; /* On top of other game elements */
+        }
+        /* FIXED: Redesigned spin wheel modal */
+        #wheel-result-modal .modal-box {
+            background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+            padding: 2.5rem 2rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 30px rgba(236, 72, 153, 0.4); }
+            to { box-shadow: 0 0 50px rgba(236, 72, 153, 0.7); }
+        }
+
+        /* Game 2: Why Date Me? */
+        #qualities-game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            margin: 1.5rem auto;
+        }
+        .quality-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            color: #831843;
+            box-shadow: 0 4px 15px rgba(131, 24, 67, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .quality-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(131, 24, 67, 0.2);
+        }
+        .quality-card.selected {
+            background: #db2777;
+            color: white;
+            transform: scale(1.05);
+            pointer-events: none;
+        }
+        .quality-card.fading-out {
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+        #qualities-status-message {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f43f5e;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 99px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Game 3: Memory Match */
+        #memory-game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            max-width: 400px;
+            margin: 1.5rem auto;
+            perspective: 1000px;
+        }
+        .memory-card {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .memory-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .memory-card .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(131, 24, 67, 0.1);
+        }
+        .card-front {
+            background: white;
+            font-size: 2.5rem;
+            color: #831843;
+            transform: rotateY(180deg);
+        }
+        .card-back {
+            background: #f9a8d4;
+            font-size: 2.5rem;
+            color: #db2777;
+        }
+        .memory-card.matched {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Game 4: Love Quiz */
+        #quiz-question {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+        }
+        #quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .quiz-option-btn {
+            background: white;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .quiz-option-btn:hover {
+            background: #fbcfe8;
+        }
+        .quiz-option-btn.correct { background: #65a30d; color: white; }
+        .quiz-option-btn.incorrect { background: #dc2626; color: white; }
+        #quiz-feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particle-container"></div>
+
+    <!-- Login screen appears first, covering the whole page -->
+    <div id="login-overlay" class="fixed top-0 left-0 w-full h-full flex justify-end items-center transition-opacity duration-1000 pr-8 md:pr-16 lg:pr-32">
+        <div class="text-center p-8 bg-white/20 backdrop-blur-md rounded-2xl shadow-2xl shadow-pink-900/50 max-w-sm w-full">
+            <h2 id="login-title" class="font-great-vibes text-5xl text-pink-900 mb-4">A Story That Began With a Prank</h2>
+            <p class="text-pink-800 mb-6">Vyshu, my cupcake, remember how this all started? A prank call that turned into our future. This world is for you. Enter the word that binds our hearts.</p>
+            <input type="password" id="password-input" class="w-full px-4 py-3 text-pink-900 placeholder-pink-700/50 text-lg rounded-lg focus:outline-none transition text-center" placeholder="Our Magic Word...">
+            <p id="error-message" class="text-red-500 text-sm mt-2 h-5"></p>
+            <button id="login-button" class="mt-4 bg-pink-600 text-white font-bold py-3 px-10 rounded-full shadow-lg shadow-pink-500/50 hover:bg-pink-700 transform hover:scale-105 transition">Enter Our World</button>
+        </div>
+    </div>
+    
+    <!-- Header is hidden until login is successful -->
+    <header id="app-header" class="fixed top-0 w-full hidden">
+        <nav id="main-nav" class="container mx-auto px-4">
+            <div class="flex justify-center items-center h-20 space-x-2 md:space-x-4 lg:space-x-6 text-sm md:text-base">
+                <a href="#welcome" class="nav-link font-semibold">Home</a>
+                <a href="#moments" class="nav-link font-semibold">Moments</a>
+                <a href="#dreams" class="nav-link font-semibold">Dreams</a>
+                <a href="#letter" class="nav-link font-semibold">Letter</a>
+                <a href="#journey" class="nav-link font-semibold">Journey</a>
+                <a href="#game" class="nav-link font-semibold">Game</a>
+                <a href="#question" class="nav-link font-bold text-lg text-pink-700">The Question</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main container for all pages -->
+    <div id="page-container">
+        <!-- Welcome Page -->
+        <section id="welcome" class="page flex items-center justify-center text-center">
+            <div class="bg-white/20 p-10 rounded-2xl shadow-2xl shadow-pink-900/50 max-w-3xl">
+                <h1 class="font-playfair text-4xl md:text-6xl text-pink-900 font-bold">Preyamaina Vyshu </h1>
+                <p class="mt-4 text-lg text-pink-800">Kaalam manakosam rasina kadhaloki na kosam puttina devathaku swagatham.</p>
+                <div class="mt-8">
+                    <h3 class="text-pink-900 text-2xl font-playfair">Our Special Day</h3>
+                    <div id="countdown" class="text-4xl font-bold text-pink-900 mt-2 flex justify-center"></div>
+                </div>
+                <div class="mt-8 border-t-2 border-pink-200/50 pt-6">
+                    <h3 class="text-pink-900 text-2xl font-playfair mb-4">When Our Stars Aligned</h3>
+                    <div class="flex justify-center gap-8 text-pink-800">
+                        <div id="his-birthday"></div>
+                        <div id="her-birthday"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Moments Page -->
+        <section id="moments" class="page">
+            <div class="container mx-auto px-4 py-12 text-center">
+                <h2 class="font-playfair text-3xl md:text-4xl text-pink-900 mb-2">Our Unforgettable Chapters</h2>
+                <p class="text-pink-800 mb-4">Manam kalisi digina prathi photo ki oka back story untundhi aa story nadipinchedhi... ni paina naku unna PREMA.</p>
+                
+                <!-- UPDATED: Removed "Dreams" from here -->
+                <div id="moments-tabs" class="flex justify-center">
+                    <button class="moment-tab-btn active" data-tab="gallery">Gallery</button>
+                    <button class="moment-tab-btn" data-tab="grid">Photo Grid</button>
+                </div>
+
+                <div id="gallery" class="moments-tab-content active">
+                    <div id="moments-gallery" class="relative w-full max-w-4xl mx-auto"></div>
+                </div>
+                
+                <div id="grid" class="moments-tab-content">
+                    <div id="photo-grid-container" class="max-w-5xl mx-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =================================================================================== -->
+        <!-- START: NEW DEDICATED DREAMS PAGE -->
+        <!-- =================================================================================== -->
+        <section id="dreams" class="page">
+            <div class="container mx-auto px-4 py-12 text-center">
+                <h2 class="font-playfair text-3xl md:text-4xl text-pink-900 mb-2">Our Shared Dreams</h2>
+                <p class="text-pink-800 mb-8 max-w-2xl mx-auto">mana dreams division...Nuvvu ee board paina add chese prathi dream Neraverchedhi CHAITANYA!</p>
+
+                <!-- REVISED: Interactive Notice Board -->
+                <div id="dream-jar-wrapper" class="max-w-md mx-auto">
+                    <!-- The notice board and notes will be created here by JavaScript -->
+                </div>
+                <div class="flex justify-center items-center gap-2 max-w-md mx-auto">
+                   <input type="text" id="dream-input" class="placeholder-pink-700/50" placeholder="What's our next adventure?">
+                   <button id="add-dream-btn">Add Dream</button>
+                </div>
+                <!-- End of new Notice Board -->
+
+                <div id="dreams-container">
+                    <div class="dream-section">
+                        <h3>✈️ Our Travel Bucket List</h3>
+                        <ul class="dream-list text-left space-y-2 text-pink-800">
+                            <li>World motham neetho tirigeseyali.</li>
+                            <li>Nee kantlo nunchi asala oka chukka niru kuda rakunda chusukovali.</li>
+                            <li>Long drive night antha car lo trip veyali madyalo niku icecream tinipichali</li>
+                            <li>Manchi varsham lo idharam tadusukuntu dance cheyali.</li>
+                            <li>Camping at the beach counting the stars whole night.</li>
+                            <li>Pelli ayelopu oka 49 times manam hehehe chesukovali</li>
+                            <li>Neetho kalisi Cooking cheyali.</li>
+                            <li>Oka 1tb memory card full aye ani picks digali.</li>
+                            <li>Nennu thapu chesi dorikina prathisari neetho kotinchukovali.</li>
+                        </ul>
+                    </div>
+                    <div class="dream-section">
+                        <h3>🏡 Our Dream House</h3>
+                        <p class="text-pink-800">Mana Home ela undali antey entha mandhi guests vachina manaki unde privacy manaki undali..Full comfortable furniture and oka theater spacious kitchen etc ani undali even walls must close there eyes seeing our romance.</p>
+                        <!-- UPDATED IMAGE -->
+                        <img src="home.jpg" alt="A beautiful modern house" class="rounded-lg shadow-lg mx-auto mt-4">
+                    </div>
+                    <div class="dream-section">
+                        <h3>💖 Our Future Plans</h3>
+                        <p class="text-pink-800">Kalisi unnantha kalam okari cheyi okaru vadhulukokunda,prathi okaru manalini chusi kullukuni sache antha happy ga undali..vilu bale okalaki okalu loyal untaru ra anesi market motham talk undela perfect ga..Weekly once movie ki..montly once trips ki..daily once godava paduthu hourly once natho nuvvu sorry chepinchukuntu secondly once nennu ni paina chupinche love ni experience chesthu life long antey naku time saripoye antha varaku kalisi undali adhey mana future plan. .</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- =================================================================================== -->
+        <!-- START: NEW IMPROVED LETTER PAGE -->
+        <!-- =================================================================================== -->
+        <section id="letter" class="page flex flex-col items-center justify-center p-4">
+            <div class="container mx-auto px-4 py-12 text-center">
+                <h2 class="font-playfair text-3xl md:text-4xl text-pink-900 mb-2">A Letter For You</h2>
+                <p class="text-pink-800 mb-8">Manasulo unna matalaki seal vesi mari Badraparichanu Vyshu (antey avi mana secrets kadha )</p>
+                
+                <div id="envelopeWrapper" class="envelope-wrapper">
+                    <div class="envelope">
+                        <div class="flap"></div>
+                        <div class="seal">GP</div>
+                    </div>
+                </div>
+                <p id="instruction" class="text-pink-700 mt-20 transition-opacity duration-500">Click the envelope to open</p>
+            </div>
+        </section>
+        <!-- =================================================================================== -->
+        <!-- END: IMPROVED LETTER PAGE -->
+        <!-- =================================================================================== -->
+
+        <!-- =================================================================================== -->
+        <!-- START: REBUILT Animated Journey Tree Page -->
+        <!-- =================================================================================== -->
+        <section id="journey" class="page flex flex-col items-center justify-center">
+            <!-- Scoped Styles for the Enhanced Journey Tree -->
+            <style>
+                /* Journey Tree specific styles (namespaced with 'jt-') */
+                .jt-container {
+                    position: relative;
+                    width: 100%;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                    height: 90%;
+                    min-height: 500px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .jt-svg {
+                    position: absolute;
+                    top: 0; left: 0;
+                    width: 100%; height: 100%;
+                    overflow: visible;
+                }
+                .jt-branch {
+                    fill: none;
+                    stroke: #be185d; /* Branch color */
+                    stroke-width: 3; /* Branch thickness */
+                    stroke-linecap: round;
+                }
+                .jt-leaf {
+                    fill: #08eb1a; /* Leaf color */
+                    opacity: 0;
+                    transform-origin: center;
+                }
+                /* --- IMPROVED: MILESTONE NODE STYLE --- */
+                .jt-milestone-node {
+                    position: absolute;
+                    width: 50px; /* Increased size */
+                    height: 50px; /* Increased size */
+                    background: linear-gradient(145deg, #ffffff, #fce7f3); /* Soft gradient */
+                    border: 3px solid #db2777; /* Node border color */
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.5rem; /* Increased icon size */
+                    cursor: pointer;
+                    box-shadow: 0 5px 20px rgba(219, 39, 119, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.7);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    transform: translate(-50%, -50%) scale(1);
+                    opacity: 0;
+                    will-change: transform, opacity;
+                }
+                .jt-milestone-node:hover, .jt-milestone-node:focus {
+                    transform: translate(-50%, -50%) scale(1.2);
+                    box-shadow: 0 8px 30px rgba(219, 39, 119, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.7);
+                }
+                @keyframes jt-pulse {
+                    0% { box-shadow: 0 5px 20px rgba(219, 39, 119, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.7); }
+                    50% { box-shadow: 0 8px 30px rgba(219, 39, 119, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.7); }
+                    100% { box-shadow: 0 5px 20px rgba(219, 39, 119, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.7); }
+                }
+                .jt-milestone-node.jt-pulse-anim {
+                    animation: jt-pulse 2s infinite ease-in-out;
+                }
+                /* --- MODIFIED: Journey Card for Scrolling --- */
+                .jt-card {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    width: 90%;
+                    max-width: 400px;
+                    /* ADDED: Max-height to control size and allow scrolling */
+                    max-height: 70vh; 
+                    /* ADDED: Overflow to enable vertical scrolling when content is too long */
+                    overflow-y: auto;
+                    background: linear-gradient(135deg, #fff1f2 0%, #fdf2f8 100%);
+                    border-radius: 1rem;
+                    padding: 1.5rem;
+                    box-shadow: 0 10px 30px rgba(88, 28, 135, 0.2);
+                    border: 1px solid white;
+                    opacity: 0;
+                    visibility: hidden;
+                    z-index: 10;
+                    transform-origin: center;
+                    pointer-events: none;
+                }
+                .jt-card.jt-active {
+                    opacity: 1;
+                    visibility: visible;
+                    pointer-events: auto;
+                }
+                /* --- NEW: MILESTONE CARD CLOSE BUTTON --- */
+                .jt-card-close-btn {
+                    position: absolute;
+                    top: 10px;
+                    right: 10px;
+                    width: 28px;
+                    height: 28px;
+                    background: rgba(131, 24, 67, 0.2);
+                    border: none;
+                    border-radius: 50%;
+                    color: #831843;
+                    font-size: 1.2rem;
+                    font-weight: bold;
+                    line-height: 1;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+                .jt-card-close-btn:hover {
+                    background: rgba(131, 24, 67, 0.4);
+                    transform: scale(1.1);
+                }
+                .jt-card h3 { font-family: 'Playfair Display', serif; }
+                .jt-card p { 
+                    font-size: 0.95rem;
+                    /* ADDED: Padding at the bottom for better scrolling experience */
+                    padding-bottom: 1rem;
+                }
+
+                .jt-legend {
+                    position: absolute;
+                    top: 20px;
+                    right: 20px;
+                    background: rgba(255, 255, 255, 0.3);
+                    backdrop-filter: blur(5px);
+                    border-radius: 0.75rem;
+                    padding: 1rem;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+                    border: 1px solid rgba(255,255,255,0.3);
+                    max-height: 80vh;
+                    overflow-y: auto;
+                }
+                .jt-legend-item {
+                    cursor: pointer;
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 5px;
+                    transition: background-color 0.3s;
+                }
+                .jt-legend-item:hover { background-color: rgba(219, 39, 119, 0.2); }
+
+                /* MODIFIED: Replay button positioning */
+                .jt-replay-btn {
+                    position: absolute;
+                    bottom: 200px;
+                    right: 20px; /* Moved to the right */
+                    background-color: #db2777;
+                    color: white;
+                    font-weight: bold;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 99px;
+                    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.4);
+                    transition: all 0.2s ease;
+                }
+                .jt-replay-btn:hover { transform: scale(1.05); } /* Adjusted hover transform */
+
+                /* Particle effect for journey page */
+                .jt-particle {
+                    position: absolute;
+                    font-size: 1.2rem;
+                    color: rgba(236, 72, 153, 0.5); /* Particle color */
+                    pointer-events: none;
+                }
+
+                /* Mobile view: Simple Vertical Vine */
+                @media (max-width: 768px) {
+                    .jt-legend { display: none; } /* Hide legend on mobile */
+                    .jt-milestone-node { width: 40px; height: 40px; font-size: 1.2rem; }
+                }
+            </style>
+
+            <div class="container mx-auto px-4 py-12 text-center h-full flex flex-col">
+                <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Our Blooming Journey</h2>
+                <p class="text-pink-800 mb-4 max-w-2xl mx-auto">From a single seed of a prank, My love grew into something beautiful. Click on a memory to see it bloom.</p>
+                <div class="jt-container flex-grow">
+                    <!-- Journey Tree and milestones will be injected here by JavaScript -->
+                </div>
+                <button id="jt-replay-btn" class="jt-replay-btn">Replay Journey</button>
+            </div>
+            
+            <!-- JavaScript for the Enhanced Journey Tree -->
+            <script>
+                // This script is self-contained for the Journey Tree section.
+                // It will only run when the journey page is initialized.
+                function initJourneyPage() {
+                    console.log("Initializing Enhanced Journey Tree...");
+
+                    // --- CONFIGURATION ---
+                    const milestoneData = [
+                        { id: 'prank', date: 'Nov 25, 2024', title: 'The Prank', icon: '💬', story: 'Andhamaina mana story oka chinna prank ane seed tho start ayindhi 🥰, Edho saradhaga intension lekunda chesina call manalini intha dhuram tesukuvachindhi antey some magical force exist btw us anesi kadha 💖. Anyways "THANKS FOR CHOOSING ME VYSHULU" 🤗😘', desktopPos: { x: '50%', y: '95%' } },
+                        { id: 'calls', date: 'Late 2024', title: 'Endless Calls', icon: '📞', story: 'Ni gurinchi alochinchatam ratri start chesthey tellaripoyedhi 🌙📞. feelings on you are so goated! Entha antey nennu ni meedha full addict ayipoyanu. Starting lo ayithey kothaga undedhi ✨, Ippudu ayithey addiction ayindhi 🥰. Nuvvu call cheyali nennu "AHH CHEPPU Nanna" Anali, this is the medicine 💊 for my daily HAPPINESS ❤️', desktopPos: { x: '40%', y: '80%' } },
+                        { id: 'meeting', date: 'July 21,2025', title: 'First Meeting', icon: '🤝', story: 'The day our digital world became real 🌟. Nennu ninnu for the first time real ga chusina day. Niku aa day gurinchi chala sarlu cheppali anukuna, Aroju neetho matladali anukuni dasukuna ani matladesa 🤪. Nathoni eppudu eppudu matladathava anesi chala eager ga 10000 eyes tho chuse rojulu avi 🙏. (Ippatiki alane unta anuko same eager tho 🤗).', desktopPos: { x: '60%', y: '75%' } },
+                        { id: 'feeding', date: 'July 21, 2025', title: 'The feeding cake', icon: '🍽️', story: 'Asala naku nennu tintame sariga radhu, ma amma daily nennu sariga tintam ledhu anesi tiduthundhi alantidhi niku nennu cake tinipistha anesi asala anukoledhu nanna , ala niku cake tinipisthu untey edho oka chinna pillaki tinipinchina felling vachindhi naku adhi chala special moment naku nennu niku tinipisthuntey vachina hapiness intha antha kadhu pelli ayaka niku daily ani neney tinipistha and appudu chudu oka chinna pillani chusukunatlu chusukunta anyways THANKS FOR THE SPARK ✨❤️.', desktopPos: { x: '35%', y: '60%' } },
+                        { id: 'car', date: 'July 27 2025', title: 'Car Journey', icon: '🚌', story: 'Ni pakkana kurchuni car lo ala travel chestha untey aa hapiness verey telusa Nijanga naku life long alane travel cheyali ani undhi neetho and aroju trafic untey bagundu anipinchindhi inka ekkuva sepu neetho ala travel cheyavachu anesi and aa car ni koneyali anipinchidhi edho oka time lo aa car ni manam konedham coz its our first favourite mode of travelling kadha , adi naa life lo oka madhura memory… ee rojuki gurthochesthe goosebumbs aee💫✨', desktopPos: { x: '45%', y: '45%' } },
+                        { id: 'Test', date: 'Feb 2025', title: 'A Test of Love', icon: '💔', story: 'February literally oka storm laga vachindi 🌪️… appatidhaka chala happy ga unde life ki, oka sudden ga disti tinattu mana madhya distance vachindhi 💔.Nenu ni photos delete chesi thappu chesanu adhi naku telusu ,But dhaniki nuvvu naku antha punishment isthav anukoledhu 😞. Nuvvu chesthuna avoid ni tatukoleka poyanu , aa 7 days chala kastanga gadisindhi , kani nuvvu malli tirigi vastav anesi petkuna hope waste avaledhu 💭💔.Appatidhaka entha happy ga unde vadini… oka sudden ga anthakanna ekkuva sad ayyanu 😢.“MAYBE THAT ENDED THERE” ani nenu anukuni digest chesukoleka poyanu.', desktopPos: { x: '55%', y: '35%' } },
+                        { id: 'reunion', date: 'Late Feb 2025', title: 'Reunion', icon: '🧑‍🤝‍🧑', story: 'And then… after 7 days .Toofan entha pedda ga vachina ⛈️…Rasi petti untey mountains ki emi cheyalekapothundhi ⛰️.Ade vidhamgaa… mana madhya vachina gap kuda,Naa meedha unna prema ki emi cheyalekapoyindi ❤️.Mana reunion oka manchi varam laga anipinchindi 🤲✨.Future lo emi jarigina… hope ni eppudu kolipokudadhu ani,Oka strong nammakam nenu build chesukunna 💭🙏.Aa one week  entha badha tho gadapina…Nee tho unna rendu rojulu aa anni pain lu cover chesayi 😍💫."Adhi nanney nanney cheravache chanchala 🎶" nunchi,"Thanu chilipiga naguvulu chilikithey 🎶" ki transform ayyanu 🥹❤️.Eni misunderstandings jarigina… entha gap vachina…Oka gurthu eppudu mind lo undali Vyshu 👉CHAITANYA eppatiki Vyshu kosam wait chesthune untadu 💌🕰️..', desktopPos: { x: '30%', y: '30%' } },
+                        { id: 'gift', date: 'Sep 23, 2025', title: 'The Surprise Gift', icon: '🎁', story: 'Nrml gaane nenu oka dumb and confused kid 😅… naku pedhaga selections ravvu. So oka dress tesukundham anukunna 👗… but what if 🤔… niku frnds evaraina dress istharu and adi nenu ichindanikante baguntundaa? Appudu nenu next year dhaka disappoint ayyi untanu 😔.Moreover… mana first birthday manam kalisi celebrate chesukunna di 🥳… so chalaaa special ga undali ani anukunna 💖. avi like na efforts ni chupinchai 💪❤️.nennu ichina prathi gift chala kastamga select chesanu Next time… inkaaa ekkuva suprise cheyyali ani fix ayya 🔥💝..', desktopPos: { x: '70%', y: '25%' } },
+                        { id: 'hug', date: 'July 21, 2025', title: 'Our First Hug', icon: '🤗', story: 'Mana first hug oka special feeling life lo jarigina first moment Aa hug lo oka warmth, oka relief, oka connection anipinchindi. Ni heart beat naku vinipinchindi, naa gunde kuda same rhythm lo adirindi. Aa kshanam lo time apudu nilichipoyina laaga anipinchindi. Simple hug kaadhu… oka feeling, manasulo deep ga unchukuney moment ayindi.', desktopPos: { x: '40%', y: '15%' } },
+                        { id: 'kiss', date: 'July 23, 2025', title: 'Our First Kiss', icon: '💋', story: 'NO WORDS ABOUT THIS JUST 404 ERROR ANTHEY chepataniki words undavu dhani gurinchi loveeeeee youuuuuuuuu sooooooooooo mcuhhhhhhhhhhhh Vyshu', desktopPos: { x: '25%', y: '5%' } },
+                        { id: 'promise', date: 'FOREVER', title: 'Promise of Love', icon: '💍', story: 'Chesina promise edhi kuda ninnu mosam cheyataniki ayithey asala kadhu vyshu, prematho chepindhi edhi ayina sare flirting kadhu niku mata ichinatlu nennu mi intlo opistha niku manchi rich dreamt life istha happy ga chusukunta i promise you this nennu ninnu life long vadalakunda same love inka increase chesukuntu na standards penchukuntu love chesthune unta "I PROMISE YOU THAT I LOVE YOU"', desktopPos: { x: '75%', y: '2%' } }
+                    ];
+
+                    const container = document.querySelector('#journey .jt-container');
+                    let mainTimeline; // GSAP timeline
+                    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+                    function buildTree() {
+                        // Clear previous content
+                        container.innerHTML = '';
+                        
+                        const isMobile = window.innerWidth <= 768;
+
+                        const treeWrapper = document.createElement('div');
+                        treeWrapper.style.position = 'relative';
+                        treeWrapper.style.width = '100%';
+                        treeWrapper.style.height = '100%';
+
+                        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        svg.setAttribute('class', 'jt-svg');
+                        svg.setAttribute('viewBox', '0 0 800 600');
+                        svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+                        treeWrapper.appendChild(svg);
+                        
+                        // Create containers for cards and particles
+                        const cardsContainer = document.createElement('div');
+                        const particleContainer = document.createElement('div');
+                        treeWrapper.appendChild(cardsContainer);
+                        treeWrapper.appendChild(particleContainer);
+                        
+                        container.appendChild(treeWrapper);
+                        
+                        // Build UI based on screen size
+                        if (isMobile) {
+                            buildMobileVine(svg, treeWrapper, cardsContainer);
+                        } else {
+                            buildDesktopTree(svg, treeWrapper, cardsContainer);
+                            buildLegend();
+                        }
+                        
+                        createParticles(particleContainer, isMobile);
+                        setupEventListeners();
+                        animateTree();
+                    }
+                    
+                    function buildDesktopTree(svg, wrapper, cardsContainer) {
+                        const paths = [
+                            'M 400 600 C 400 500, 380 450, 380 400', // Trunk
+                            'M 380 400 C 380 350, 320 320, 280 300', // Branch left
+                            'M 380 400 C 380 350, 420 320, 480 310', // Branch right
+                            'M 280 300 C 240 280, 200 250, 240 200', // Branch left-up
+                            'M 280 300 C 240 280, 320 250, 350 220', // Branch left-mid
+                            'M 480 310 C 520 300, 580 280, 560 230', // Branch right-up
+                            'M 480 310 C 520 300, 480 250, 450 180', // Branch right-mid
+                            'M 240 200 C 280 150, 220 100, 200 50',   // Branch far left
+                            'M 560 230 C 500 180, 600 100, 600 30',   // Branch far right
+                        ];
+                        
+                        paths.forEach(d => {
+                            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            path.setAttribute('d', d);
+                            path.setAttribute('class', 'jt-branch');
+                            svg.appendChild(path);
+                        });
+
+                        milestoneData.forEach(item => {
+                             // Create Milestone Node
+                            createNode(item, wrapper, 'desktop');
+                            // Create Milestone Card
+                            createCard(item, cardsContainer);
+                        });
+                    }
+                    
+                    function buildMobileVine(svg, wrapper, cardsContainer) {
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        path.setAttribute('d', 'M 400 600 V 20');
+                        path.setAttribute('class', 'jt-branch');
+                        svg.appendChild(path);
+                        
+                        const totalMilestones = milestoneData.length;
+                        milestoneData.forEach((item, index) => {
+                            const yPercentage = 95 - (index / (totalMilestones -1)) * 90;
+                            const xPercentage = (index % 2 === 0) ? 45 : 55;
+                            item.mobilePos = { x: `${xPercentage}%`, y: `${yPercentage}%` };
+                            
+                            createNode(item, wrapper, 'mobile');
+                            createCard(item, cardsContainer);
+                        });
+                    }
+
+                    function createNode(item, wrapper, device) {
+                        const node = document.createElement('button');
+                        node.id = `jt-node-${item.id}`;
+                        node.className = 'jt-milestone-node';
+                        node.innerHTML = item.icon;
+                        node.setAttribute('aria-label', `View details for ${item.title}`);
+                        node.setAttribute('aria-expanded', 'false');
+                        node.setAttribute('aria-controls', `jt-card-${item.id}`);
+                        node.dataset.milestoneId = item.id;
+                        node.tabIndex = 0;
+
+                        const pos = device === 'mobile' ? item.mobilePos : item.desktopPos;
+                        node.style.left = pos.x;
+                        node.style.top = pos.y;
+                        
+                        wrapper.appendChild(node);
+                    }
+
+                    function createCard(item, cardsContainer) {
+                        const card = document.createElement('div');
+                        card.id = `jt-card-${item.id}`;
+                        card.className = 'jt-card';
+                        card.setAttribute('role', 'dialog');
+                        card.style.transform = `translate(-50%, -50%) scale(0.8)`;
+                        card.innerHTML = `
+                            <button class="jt-card-close-btn" aria-label="Close message">&times;</button>
+                            <h3 class="text-2xl text-pink-900 mb-1">${item.title}</h3>
+                            <p class="font-semibold text-pink-700 mb-3">${item.date}</p>
+                            <p class="text-pink-800">${item.story}</p>
+                        `;
+                        cardsContainer.appendChild(card);
+                    }
+                    
+                    function buildLegend() {
+                        const legend = document.createElement('div');
+                        legend.className = 'jt-legend';
+                        legend.innerHTML = '<h3 class="font-playfair text-lg text-pink-900 mb-2">Our Story</h3>';
+                        const list = document.createElement('ul');
+                        
+                        milestoneData.forEach(item => {
+                            const li = document.createElement('li');
+                            li.className = 'jt-legend-item text-pink-800';
+                            li.textContent = item.title;
+                            li.dataset.milestoneId = item.id;
+                            list.appendChild(li);
+                        });
+                        
+                        legend.appendChild(list);
+                        container.appendChild(legend);
+                    }
+                    
+                    function createParticles(particleContainer, isMobile) {
+                        const particleCount = isMobile ? 15 : 30;
+                        const particles = '♡♥';
+                        for (let i=0; i < particleCount; i++) {
+                            const p = document.createElement('span');
+                            p.className = 'jt-particle';
+                            p.textContent = particles[Math.floor(Math.random() * particles.length)];
+                            particleContainer.appendChild(p);
+                            
+                            gsap.set(p, {
+                                x: gsap.utils.random(0, container.clientWidth),
+                                y: gsap.utils.random(0, container.clientHeight * 1.2),
+                                scale: gsap.utils.random(0.5, 1.2),
+                                opacity: 0
+                            });
+
+                            if (!prefersReducedMotion) {
+                                gsap.to(p, {
+                                    y: '-=200',
+                                    opacity: gsap.utils.random(0.2, 0.6),
+                                    duration: gsap.utils.random(10, 20),
+                                    repeat: -1,
+                                    yoyo: true,
+                                    ease: 'sine.inOut',
+                                    delay: gsap.utils.random(0, 10)
+                                });
+                            }
+                        }
+                    }
+
+                    function animateTree() {
+                        mainTimeline = gsap.timeline({
+                            onComplete: () => {
+                                document.querySelectorAll('.jt-milestone-node').forEach(n => n.classList.add('jt-pulse-anim'));
+                            }
+                        });
+                        
+                        const branches = document.querySelectorAll('.jt-branch');
+                        const nodes = document.querySelectorAll('.jt-milestone-node');
+                        const svg = document.querySelector('.jt-svg');
+
+                        if (prefersReducedMotion) {
+                            gsap.set(branches, { strokeDashoffset: 0 });
+                            gsap.set(nodes, { opacity: 1, scale: 1 });
+                            return;
+                        }
+                        
+                        // --- FASTER ANIMATION: Animate branches drawing ---
+                        branches.forEach(branch => {
+                            const length = branch.getTotalLength();
+                            gsap.set(branch, { strokeDasharray: length, strokeDashoffset: length });
+                            mainTimeline.to(branch, { strokeDashoffset: 0, duration: 1, ease: 'power1.inOut' }, "-=0.8"); // FASTER
+                            
+                            // Sprout leaves along the branches
+                             for(let i = 0; i < 10; i++) {
+                                const leaf = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                                leaf.setAttribute('r', gsap.utils.random(2, 4));
+                                leaf.setAttribute('class', 'jt-leaf');
+                                svg.appendChild(leaf);
+                                const pos = branch.getPointAtLength(length * (i/10));
+                                gsap.set(leaf, { attr: { cx: pos.x, cy: pos.y } });
+                                mainTimeline.to(leaf, { 
+                                    opacity: 1, 
+                                    scale: 1, 
+                                    transformOrigin: 'center',
+                                    duration: 0.3, // FASTER 
+                                    ease: 'back.out(2)' 
+                                }, "-=0.05"); // FASTER
+                            }
+                        });
+                        
+                        // Animate nodes appearing
+                        mainTimeline.to(nodes, {
+                            opacity: 1,
+                            scale: 1,
+                            duration: 0.6, // FASTER
+                            ease: 'back.out(1.7)',
+                            stagger: 0.2 // FASTER
+                        }, "-=1.0"); // FASTER
+                    }
+
+                    function showCard(milestoneId) {
+                        hideAllCards();
+                        const card = document.getElementById(`jt-card-${milestoneId}`);
+                        const node = document.getElementById(`jt-node-${milestoneId}`);
+                        if (card) {
+                            card.classList.add('jt-active');
+                            node.setAttribute('aria-expanded', 'true');
+                            gsap.to(card, { 
+                                transform: `translate(-50%, -50%) scale(1)`,
+                                duration: 0.5,
+                                ease: 'back.out(1.7)'
+                             });
+                        }
+                    }
+
+                    function hideAllCards() {
+                         document.querySelectorAll('.jt-card.jt-active').forEach(card => {
+                            gsap.to(card, {
+                                transform: `translate(-50%, -50%) scale(0.8)`,
+                                duration: 0.3,
+                                ease: 'power2.in',
+                                onComplete: () => card.classList.remove('jt-active')
+                            });
+                        });
+                        document.querySelectorAll('.jt-milestone-node').forEach(node => node.setAttribute('aria-expanded', 'false'));
+                    }
+
+                    function setupEventListeners() {
+                        container.addEventListener('click', (e) => {
+                            const node = e.target.closest('.jt-milestone-node');
+                            const legendItem = e.target.closest('.jt-legend-item');
+                            const closeBtn = e.target.closest('.jt-card-close-btn');
+                            
+                            if (node) {
+                                showCard(node.dataset.milestoneId);
+                            } else if (legendItem) {
+                                showCard(legendItem.dataset.milestoneId);
+                                const targetNode = document.getElementById(`jt-node-${legendItem.dataset.milestoneId}`);
+                                gsap.fromTo(targetNode, {scale: 1.5}, {scale: 1, duration: 0.5, ease: 'back.out'});
+                            } else if (closeBtn) {
+                                hideAllCards();
+                            } else if (!e.target.closest('.jt-card')) {
+                                hideAllCards();
+                            }
+                        });
+
+                        container.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                const node = e.target.closest('.jt-milestone-node');
+                                if(node) {
+                                    e.preventDefault();
+                                    showCard(node.dataset.milestoneId);
+                                }
+                            } else if (e.key === 'Escape') {
+                                hideAllCards();
+                            }
+                        });
+                        
+                        document.getElementById('jt-replay-btn').addEventListener('click', () => {
+                              document.querySelectorAll('.jt-milestone-node').forEach(n => n.classList.remove('jt-pulse-anim'));
+                            if (mainTimeline) mainTimeline.restart();
+                        });
+                    }
+
+                    // Initial build
+                    buildTree(); 
+                }
+            </script>
+        </section>
+        <!-- =================================================================================== -->
+        <!-- END: Animated Journey Tree Page -->
+        <!-- =================================================================================== -->
+            
+        <!-- Game Page -->
+        <section id="game" class="page flex flex-col items-center justify-center">
+             <div class="container mx-auto px-4 py-12 text-center max-w-4xl">
+                    <div class="bg-white/20 p-8 md:p-12 rounded-lg shadow-2xl shadow-pink-900/50">
+                        
+                        <div id="game-menu">
+                            <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">FREE FIRE ANTHA KAKAPOYINA EDHO NIKOSAM EE GAMES</h2>
+                            <p class="text-pink-800 my-4">Pick a game to play, my love!</p>
+                            <div class="flex flex-col items-center gap-4 mt-6">
+                                <button class="game-menu-button" data-game="catch-the-stars">Catch the Stars</button>
+                                <button class="game-menu-button" data-game="spin-the-wheel">❤️🎡 Spin the Wheel of Love</button>
+                                <button class="game-menu-button" data-game="qualities">Why Date Me?</button>
+                                <button class="game-menu-button" data-game="memory">Memory Match</button>
+                                <button class="game-menu-button" data-game="quiz">Our Love Quiz</button>
+                            </div>
+                        </div>
+
+                        <div id="catch-the-stars-game" class="game-container">
+                            <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Catch the Stars!</h2>
+                            <p class="text-pink-800 my-4">A game for the star of my life.</p>
+                            <div class="game-instructions mb-4">
+                                <p class="font-bold">Score: <span id="score">0</span> | Time: <span id="time">20</span></p>
+                            </div>
+                            <canvas id="game-canvas"></canvas>
+                            <button id="play-again-btn" class="game-menu-button">Play Again</button>
+                            <button class="back-to-games-btn">← Back to Games</button>
+                        </div>
+
+                         <div id="spin-the-wheel-game" class="game-container">
+                                <button class="back-to-games-btn">← Back to Games</button>
+                                <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Wheel of Love</h2>
+                                <p class="text-pink-800 my-4">Spin the wheel to see what fate tells us to do!</p>
+                                <div id="wheel-container">
+                                    <canvas id="wheel-canvas" width="350" height="350"></canvas>
+                                    <div id="wheel-pointer"></div>
+                                </div>
+                                <button id="spin-btn" class="game-menu-button">Spin!</button>
+                          </div>
+
+                        <div id="qualities-game" class="game-container">
+                           <button class="back-to-games-btn">← Back to Games</button>
+                           <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Why Date Me?</h2>
+                           <p class="text-pink-800 my-4">Find all 9 of my best qualities to win my heart!</p>
+                           <p class="font-bold text-pink-900">Qualities Found: <span id="qualities-found">0</span> / 9</p>
+                           <div id="qualities-game-grid"></div>
+                           <div id="qualities-status-message">Whoops! Not that one.</div>
+                        </div>
+                        
+                        <div id="memory-game" class="game-container">
+                           <button class="back-to-games-btn">← Back to Games</button> <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Memory Match</h2>
+                           <p class="text-pink-800 my-4">Match the moments that made us!</p>
+                           <p class="font-bold text-pink-900">Moves: <span id="memory-moves">0</span></p>
+                           <div id="memory-game-grid"></div>
+                        </div>
+
+                        <div id="quiz-game" class="game-container">
+                           <button class="back-to-games-btn">← Back to Games</button> <h2 class="font-playfair text-3xl md:text-4xl text-pink-900">Our Love Quiz</h2>
+                           <p class="text-pink-800 my-4">How well do you know our story?</p>
+                           <div id="quiz-content">
+                               <div id="quiz-question"></div>
+                               <div id="quiz-options"></div>
+                               <div id="quiz-feedback"></div>
+                           </div>
+                        </div>
+
+                   </div>
+             </div>
+        </section>
+
+        <!-- The Question Page -->
+        <section id="question" class="page flex justify-center items-center">
+            <div class="question-overlay"></div>
+            <div class="question-content text-center flex flex-col items-center p-4">
+                
+                <div id="pre-proposal-text" class="opacity-0 max-w-2xl">
+                    <h2 class="font-playfair text-3xl md:text-4xl text-pink-200 mb-4">Vyshu, our journey has been incredible...</h2>
+                    <p class="text-white/80 text-lg md:text-xl mb-8">From a simple prank to a love that feels like destiny. Every laugh, every challenge, and every quiet moment has led us here. To this one, perfect moment, Nennu ninnu adugudham anukuna one FINAL QUESTION.</p>
+                </div>
+
+                <svg id="ring-box-svg" viewBox="0 0 100 100">
+                    <defs>
+                        <linearGradient id="boxGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#be185d; stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#831843; stop-opacity:1" />
+                        </linearGradient>
+                         <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                             <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#000" flood-opacity="0.4"/>
+                           </filter>
+                    </defs>
+                    <path d="M 20 60 L 20 90 L 80 90 L 80 60 L 50 45 Z" fill="url(#boxGrad)" filter="url(#shadow)"/>
+                    <path d="M 20 60 L 50 45 L 80 60" fill="#f472b6" />
+                    <g class="ring">
+                       <circle cx="50" cy="40" r="10" fill="none" stroke="#eab308" stroke-width="3" />
+                       <rect x="47" y="22" width="6" height="6" fill="#f0abfc" stroke="#a21caf" stroke-width="1" transform="rotate(45 50 25)" />
+                    </g>
+                    <path class="box-lid" d="M 20 60 L 50 45 L 80 60 L 50 75 Z" fill="url(#boxGrad)" filter="url(#shadow)"/>
+                    <path class="box-lid" d="M 20 60 L 50 45 L 80 60" fill="#f9a8d4" />
+                </svg>
+
+                <div id="proposal-container" class="opacity-0">
+                    <h2 class="font-playfair text-4xl md:text-5xl text-pink-200 mb-4 mt-8">So the one final question for you is...</h2>
+                    <div class="mx-auto max-w-max">
+                        <h1 id="proposal-question" class="font-playfair text-5xl md:text-7xl font-bold text-white tracking-wider">Will You Marry Me?</h1>
+                    </div>
+                    <div id="button-wrapper" class="mt-12 h-20 flex justify-center items-center gap-4 relative">
+                        <button id="yesBtn" class="bg-white text-pink-800 font-bold text-lg py-3 px-12 rounded-full shadow-lg transition duration-300">Yes!</button>
+                        <button id="noBtn" class="bg-pink-800 text-white font-bold text-lg py-3 px-8 rounded-full shadow-lg">No</button>
+                        <div id="no-btn-message"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+        <!-- Modals -->
+    <div id="confirmation-modal" class="fixed top-0 left-0 w-full h-full bg-black/80 flex justify-center items-center">
+        <div id="modal-content" class="modal-box transform transition-transform scale-95">
+             <button id="close-modal-btn" title="Close">×</button>
+            <h2 class="font-great-vibes text-6xl text-pink-800 mb-2">She said yes!</h2>
+            <p class="text-pink-700 mb-6 text-lg leading-relaxed">"Dongaaaa naku telusu niku nennu antey first nunche love anesi.<br>Antha fast ga opukuntav anukoledhu sarle na vyshu ki life ivataniki nennu appudo ready aee."</p>
+            <div class="text-5xl text-pink-500">💍</div>
+        </div>
+    </div>
+    
+    <div id="moments-surprise-modal">
+        <div class="modal-box">
+            <button class="close-btn" title="Close">×</button>
+            <p class="font-playfair text-2xl text-pink-800">NOTE:-Koncham navvuthu blush avuthu chudavachu kadha ee website..... LOVE YOU SO MUCH NANNA  ❤️</p>
+        </div>
+    </div>
+
+    <!-- NEW: Modal for Spin the Wheel results -->
+    <div id="wheel-result-modal" class="fixed top-0 left-0 w-full h-full bg-black/80 flex justify-center items-center hidden">
+         <div class="modal-box">
+            <button class="close-btn" title="Close">X</button>
+            <h2 class="font-great-vibes text-5xl text-pink-800 mb-2">You Won...</h2>
+            <p id="wheel-result-text" class="text-pink-700 my-4 text-3xl font-playfair font-bold"></p>
+        </div>
+    </div>
+
+    <!-- NEW: Full Screen Letter Modal -->
+    <div id="letterModal" class="letter-modal">
+        <div class="letter-content-full">
+            <button id="closeButton" class="close-button">&times;</button>
+            <h3 class="font-playfair text-3xl text-pink-800 mb-6">My Dearest Vyshu,</h3>
+            <div class="font-lora text-lg space-y-4 text-gray-700 leading-relaxed">
+                <p>Ela start cheyali ardham kavatam ledhu elagola start chesesthuna....Nennu appudu letter rasina previous letter rasinapudu unde love ki double love untundhi vyshu this time inka ekkuva undhi edho edho chepali poetic ga anukuni ela padithey ala rasesthuna.. chinnapudu school lo drawing nerchukuna or else art period lo clay art nerchukuna ventane intiki vachi same ma ammakosam okati chesi iche vadini to impress her appudu chinna pilodini kadha magic enti antey nenu ipatiki alane unna anukunta ippudu ninnu impress chesthuna...Nuvvu naku crct ga set avuthav vyshu like okala kosam okalu puttaru made for each other antaru kadha aa range loo...Na life lo chinnapati nunchi jarigina prathi incident ninnu nannu kalapataniki jarigindhi anukunta vyshu like nennu ma ammake puttatam nuvvu mi amma garike puttatam nuvvu kerala lo aa school lo join avatam nennu bhadrachalam lo evaru lenantlu dheeraj ki frnd avatam ala prathidhi manam kalavatanike jarigai vyshu...life lo edhi jarigina mana manchikey antaru kadha Na life lo unna manchi edhaiana undhi antey adhi nuvvey andhukey antuna na chinnapudu nunchi edhi jarigina adhi nannu ninnu kalapatinike jarigindhi anesi "I AM SO MAD AT YOU" .</p>
+                <p>Ninnu ela chusukuntano chepakarledhu kadha ippudu nennu student matrame and naku source of income ledhu and ekkuva badyathalu unnayi ini handle chesthu kuda ninnu full manchiga chusukuntuna (ANI NENU ANUKUNTUNA MARI).Inka nennu pedhavadini ayi mana idharam oka intlo untu naku oka source of income undhi naku unna okeokka badyatha nuvvu ayinapudu inka entha manchiga chusukuntano ardham chesukoo, Appudapudu niku thagile debbalu manam kalisi unnapudu thagalavu if thagilina nennu chese care entha baguntundhi antey aa care kosame debbalu thagilinchukuntav nuvvu antha baga chusukunta daily 3 times nennu kalipi tinipistha and moreover nennu food prepare chestha niku... Niku jwaram vasthey niku tablets nachav kabati nennu pakkana undi ni head meedha wet cloth marusthu night anta ni pakkana oka chair vesukuni ni hand hold chesthu alane padukunta vyshu just imagine how things gonna be btw us when we are TOGETHER.</p>
+                <p>Naku ni meedha love entha untundhi ani evaru ayina adigithey ela cheptha telusa ee janama ayithey nuvvu vyshu nennu chaitanya ga puttesam like nuvvu manishiga puttav kabati nennu manishi la puttanu but prathi janamalo ila puttakapovachu oka janmalo nuvvu gulab jamunu ayithey nennu oka chimmala pudatha okavella nuvvu flower ayithey nennu flower pot la pudatha uffff naku telusu nuvvu ippudu antav chemma pakam lo padithey sachipothundhi nennu matti meedha unta flower pot lo kadhu antav ik ik nuvvu nannu roast chesthune untav most unromatic ga kavali anesi ata patisthu untav huhhh ayina sare CHAITANYA ENI SARLU KOTTINA CHAVANI PAMMU</p>
+                <p>Actually letter chala pedhaga rayali anukuna but nuvvu antha sepu screen chudatam naku istam ledhu vyshu and more over please ee last paragraph i.e from here manasulo pettukunela chaduvu Vyshu ni naku endhuku ivali antey "Vyshu ni nakantey ekkuva love chese vallu undachu valla life lo vyshu oka padyam ayithey na life lo bhavam,prathipadhaardham kuda vyshu ney...Naku vyshu meedha intha ani chepataniki oka value lenantha prema undhi...Ma amma kantey ekkuva istam ani nennu cheppanu kani ma amma entha istamo antha istam naku vyshu antey..Vyshu na anandham (anandhani evaru korukoru cheppandi),oka matalo cheppali antey Gandhamki kuda ahaa ani pinche fragrance vyshu stars kuda kallumusukune antha shine unde star na vyshu.. evarini adigina moon earth chuttu orbit chesthundhi adhi science antaru nennu bhumi meedha unna vyshu ni orbit chesthundhi anta prapancham nannu pichodu antey yes i am pichodu anesi opukunta kani vyshu ni datti special ga dhenini chudanu not even earth ippudu chepu ee pichi saripothundha ninnu naku ivataniki " .</p>
+            </div>
+            <div class="signature font-dancing-script text-2xl text-right mt-8 text-pink-800">
+                NITHYAM NEEKOSAM, <br>CHAITANYA
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Footer is hidden until login is successful -->
+    <footer id="app-footer" class="hidden">
+        <p>CHAITANYA love for Vyshu , my forever and always. &nbsp;❤</p>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        gsap.registerPlugin(ScrollTrigger, MotionPathPlugin, Draggable);
+        
+        // --- Login screen entrance animation ---
+        gsap.from('#login-overlay > div', { duration: 1.5, x: '100vw', ease: 'power3.out', delay: 0.5 });
+        
+        // --- Set initial background to GIF ---
+        document.body.classList.add('gif-background');
+
+        const magicWord = '1129';
+        const specialDate = 'June 26, 2030 00:00:00';
+
+        const loginOverlay = document.getElementById('login-overlay');
+        const appHeader = document.getElementById('app-header');
+        const appFooter = document.getElementById('app-footer');
+        const mainNav = document.getElementById('main-nav');
+        const loginButton = document.getElementById('login-button');
+        const passwordInput = document.getElementById('password-input');
+        const pages = document.querySelectorAll('.page');
+        const errorMessage = document.getElementById('error-message');
+        
+        let momentsInitialized = false;
+        let letterInitialized = false;
+        let journeyInitialized = false;
+        let questionInitialized = false;
+        let photoGridInitialized = false; 
+        let dreamsInitialized = false; // NEW flag for the Dreams page
+        
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const noBtnMessage = document.getElementById('no-btn-message');
+        const buttonWrapper = document.getElementById('button-wrapper');
+        const modal = document.getElementById('confirmation-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const countdownElement = document.getElementById('countdown');
+
+        // Game State
+        let activeGame = null;
+        let gameIntervals = {};
+
+        createParticles();
+        startCountdown();
+        setupEventListeners();
+        initBirthdaySection();
+        initPlayfulNoButton();
+
+        function setupEventListeners() {
+            loginButton.addEventListener('click', unlockPage);
+            passwordInput.addEventListener('keyup', (event) => { if (event.key === "Enter") unlockPage(); });
+            
+            mainNav.addEventListener('click', (e) => {
+                if (e.target.matches('.nav-link')) {
+                    e.preventDefault();
+                    const pageId = e.target.getAttribute('href').substring(1);
+                    showPage(pageId);
+                }
+            });
+            
+            const momentsModal = document.getElementById('moments-surprise-modal');
+            momentsModal.querySelector('.close-btn').addEventListener('click', hideMomentsSurprise);
+            momentsModal.addEventListener('click', (e) => {
+                 if(e.target === momentsModal) hideMomentsSurprise();
+            });
+            
+            document.getElementById('moments-tabs').addEventListener('click', (e) => {
+                if(e.target.matches('.moment-tab-btn')) {
+                    const tabId = e.target.dataset.tab;
+                    switchMomentsTab(tabId);
+                }
+            });
+
+            yesBtn.addEventListener('click', showConfirmation);
+            closeModalBtn.addEventListener('click', hideConfirmation);
+
+            document.getElementById('game-menu').addEventListener('click', (e) => {
+                if(e.target.matches('.game-menu-button')) {
+                    const gameId = e.target.dataset.game;
+                    startGame(gameId);
+                }
+            });
+
+            document.querySelectorAll('.back-to-games-btn').forEach(btn => {
+                btn.addEventListener('click', showGameMenu);
+            });
+
+            const wheelModal = document.getElementById('wheel-result-modal');
+            wheelModal.querySelector('.close-btn').addEventListener('click', () => hideWheelResult());
+            wheelModal.addEventListener('click', (e) => {
+                if(e.target === wheelModal) hideWheelResult();
+            });
+        }
+
+        function unlockPage() {
+            if (passwordInput.value.trim().toLowerCase() === magicWord) {
+                errorMessage.textContent = '';
+                document.body.classList.remove('gif-background');
+                gsap.to(loginOverlay, { opacity: 0, duration: 0.8, onComplete: () => {
+                    loginOverlay.classList.add('hidden');
+                    appHeader.classList.remove('hidden');
+                    appFooter.classList.remove('hidden');
+                    gsap.from(appHeader, { y: -100, opacity: 0, duration: 0.5 });
+                    gsap.from(appFooter, { y: 100, opacity: 0, duration: 0.5 });
+                    showPage('welcome');
+                }});
+            } else {
+                errorMessage.textContent = 'Hint: It\'s the strongest feeling! 😉';
+                gsap.fromTo(loginOverlay.firstElementChild, {x: -10}, {x: 10, duration: 0.05, repeat: 5, yoyo: true, clearProps: "x"});
+            }
+        }
+
+        function clearAllGameIntervals() {
+             Object.values(gameIntervals).forEach(interval => clearInterval(interval));
+             gameIntervals = {};
+        }
+
+        function showPage(pageId) {
+            if(activeGame) {
+                clearAllGameIntervals();
+                activeGame = null;
+            }
+
+            pages.forEach(page => page.classList.remove('active'));
+            const newPage = document.getElementById(pageId);
+            if (newPage) {
+                newPage.classList.add('active');
+                newPage.scrollTop = 0; 
+                
+                if (pageId === 'welcome') {
+                    const welcomeContent = document.querySelector('#welcome > div');
+                    const heading = welcomeContent.querySelector('h1');
+                    if (!heading.dataset.animated) {
+                        heading.dataset.animated = 'true';
+                        gsap.from(welcomeContent.querySelectorAll('h1, p, div.mt-8'), {
+                            opacity: 0, y: 30, duration: 1, stagger: 0.2, ease: 'power3.out'
+                        });
+                    }
+                }
+                
+                if (pageId === 'letter' && !letterInitialized) {
+                    initLetterPage();
+                    letterInitialized = true;
+                }
+
+                if (pageId === 'moments') {
+                    if (!momentsInitialized) {
+                        initMomentsGallery();
+                        momentsInitialized = true;
+                    }
+                    switchMomentsTab('gallery'); 
+                }
+
+                if (pageId === 'dreams' && !dreamsInitialized) {
+                    initDreamsPage();
+                    dreamsInitialized = true;
+                }
+                
+                if (pageId === 'journey' && !journeyInitialized) {
+                    if (typeof initJourneyPage === 'function') {
+                        initJourneyPage();
+                    }
+                    journeyInitialized = true;
+                }
+                
+                if (pageId === 'game') {
+                    showGameMenu();
+                }
+                if (pageId === 'question' && !questionInitialized) {
+                    initQuestionPage();
+                    questionInitialized = true;
+                }
+            }
+            
+            const navLinks = mainNav.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('nav-active');
+                if (link.getAttribute('href') === `#${pageId}`) {
+                    link.classList.add('nav-active');
+                }
+            });
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particle-container');
+            if (!container) return;
+            const particleTypes = ['♡', '♥', '🌹', '✨'];
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                particle.textContent = particleTypes[Math.floor(Math.random() * particleTypes.length)];
+                const size = Math.random() * 10 + 10;
+                particle.style.fontSize = `${size}px`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDelay = `${Math.random() * 20}s`;
+                particle.style.animationDuration = `${Math.random() * 20 + 15}s`;
+                container.appendChild(particle);
+            }
+        }
+        
+        function startCountdown() {
+            const countDownDate = new Date(specialDate).getTime();
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                if (countdownElement) {
+                    countdownElement.innerHTML = `<div class="countdown-item"><div class="countdown-number">${days}</div><div class="countdown-label">Days</div></div>` +
+                                                 `<div class="countdown-item"><div class="countdown-number">${hours}</div><div class="countdown-label">Hours</div></div>` +
+                                                 `<div class="countdown-item"><div class="countdown-number">${minutes}</div><div class="countdown-label">Mins</div></div>` +
+                                                 `<div class="countdown-item"><div class="countdown-number">${seconds}</div><div class="countdown-label">Secs</div></div>`;
+                }
+                if (distance < 0) {
+                    clearInterval(x);
+                    if (countdownElement) countdownElement.innerHTML = "Our Forever Starts Now";
+                }
+            }, 1000);
+        }
+
+        function showConfirmation() {
+            modal.style.visibility = 'visible';
+            gsap.to(modal, { opacity: 1, duration: 0.5 });
+            gsap.fromTo(modalContent, { scale: 0.8 }, { scale: 1, duration: 0.5, ease: 'back.out(1.7)' });
+            
+            const duration = 5 * 1000;
+            const end = Date.now() + duration;
+            (function frame() {
+                confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 }, colors: ['#db2777', '#f9a8d4', '#FFFFFF'] });
+                confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 }, colors: ['#db2777', '#f9a8d4', '#FFFFFF'] });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+        }
+
+        function hideConfirmation() {
+             gsap.to(modal, { opacity: 0, duration: 0.5, onComplete: () => {
+                 modal.style.visibility = 'hidden';
+             }});
+        }
+
+        function getZodiacSign(day, month) {
+            const signs = ["Capricorn", "Aquarius", "Pisces", "Aries", "Taurus", "Gemini", "Libra", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn"];
+            const dates = [20, 19, 21, 20, 21, 21, 23, 23, 23, 23, 22, 22];
+            return day < dates[month-1] ? signs[month-1] : signs[month];
+        }
+
+        function initBirthdaySection() {
+            const herBirthdayEl = document.getElementById('her-birthday');
+            const hisBirthdayEl = document.getElementById('his-birthday');
+            const herSign = getZodiacSign(26, 6);
+            herBirthdayEl.innerHTML = `
+                <p class="font-bold font-playfair text-xl">Vyshu</p>
+                <p class="text-sm">September 29, 2010</p>
+                <p class="text-lg font-bold text-pink-600">${herSign} ♎</p>
+            `;
+            const hisSign = getZodiacSign(14, 12);
+            hisBirthdayEl.innerHTML = `
+                <p class="font-bold font-playfair text-xl">You</p>
+                <p class="text-sm">December 11, 2005</p>
+                <p class="text-lg font-bold text-pink-600">${hisSign} ♐</p>
+            `;
+        }
+        
+        function showMomentsSurprise() {
+            const modal = document.getElementById('moments-surprise-modal');
+            modal.style.visibility = 'visible';
+            gsap.to(modal, { opacity: 1, duration: 0.5 });
+            gsap.from(modal.querySelector('.modal-box'), { scale: 0.8, duration: 0.5, ease: 'back.out(1.7)' });
+        }
+        function hideMomentsSurprise() {
+            const modal = document.getElementById('moments-surprise-modal');
+            gsap.to(modal, { opacity: 0, duration: 0.5, onComplete: () => {
+                modal.style.visibility = 'hidden';
+            }});
+        }
+
+        function switchMomentsTab(tabId) {
+             document.querySelectorAll('.moment-tab-btn').forEach(btn => btn.classList.remove('active'));
+             document.querySelector(`.moment-tab-btn[data-tab="${tabId}"]`).classList.add('active');
+             document.querySelectorAll('.moments-tab-content').forEach(content => content.classList.remove('active'));
+             document.getElementById(tabId).classList.add('active');
+
+             if (tabId === 'grid' && !photoGridInitialized) {
+                 initPhotoGrid();
+                 photoGridInitialized = true;
+             }
+        }
+
+        function initMomentsGallery() {
+            const gallery = document.getElementById('moments-gallery');
+            if (gallery.children.length > 0) return;
+
+             const photos = [
+                  { src: "c1.jpg", caption: "My Cupcake" },
+                  { src: "c2.jpg", caption: "My boiled egg" },
+                  { src: "k9.jpg", caption: "My Clay toy" },
+                  { src: "c4.jpg", caption: "My Cotton candy" },
+                  { src: "c5.jpg", caption: "My Babee" },
+                  { src: "c6.jpg", caption: "My Chocolate" },
+                  { src: "c7.jpg", caption: "My Bangaram" },
+                  { src: "c3.jpg", caption: "My Princess" },
+                  { src: "c9.jpg", caption: "My Kinderjoy" },
+                  { src: "c10.jpg", caption: "My Goldbuscuit" },
+                  { src: "c11.jpg", caption: "No words" },
+                  { src: "c12.jpg", caption: "My bestfriend" },
+                  { src: "13.jpg", caption: "My Nanna" },
+                  { src: "c14.jpg", caption: "My Dream" },
+                  { src: "c15.jpg", caption: "My Vyshulu" },
+                  { src: "c16.jpg", caption: "My Luck" }
+             ];
+
+             const heartCoords = [
+                  {x: "50%", y: "15%"}, {x: "65%", y: "8%"}, {x: "80%", y: "15%"},
+                  {x: "90%", y: "30%"}, {x: "85%", y: "45%"}, {x: "70%", y: "60%"},
+                  {x: "50%", y: "75%"}, {x: "30%", y: "60%"}, {x: "15%", y: "45%"},
+                  {x: "10%", y: "30%"}, {x: "20%", y: "15%"}, {x: "35%", y: "8%"},
+                  {x: "50%", y: "35%"}, {x: "35%", y: "25%"}, {x: "65%", y: "25%"},
+                  {x: "50%", y: "55%"}
+             ];
+
+             photos.forEach((photo, index) => {
+                  const photoEl = document.createElement('div');
+                  photoEl.className = 'moment-photo';
+                  photoEl.innerHTML = `
+                        <img src="${photo.src}" alt="${photo.caption}" onerror="this.onerror=null;this.src='https://placehold.co/120x110/fbcfe8/831843?text=Memory';">
+                        <p>${photo.caption}</p>
+                  `;
+                  
+                  const pos = heartCoords[index % heartCoords.length];
+                  gsap.set(photoEl, { top: pos.y, left: pos.x, transform: `translate(-50%, -50%) rotate(${Math.random()*20-10}deg)` });
+
+                  gallery.appendChild(photoEl);
+                  photoEl.addEventListener('click', () => showLightbox(photo.src, photo.caption));
+             });
+
+             gsap.fromTo(".moment-photo", 
+                 { opacity: 0, scale: 0 }, 
+                 { 
+                     duration: 1.5, 
+                     opacity: 1, 
+                     scale: 1, 
+                     stagger: {
+                          from: "center",
+                         amount: 0.5
+                     },
+                     ease: 'back.out(1.7)',
+                     onComplete: () => {
+                          if (!sessionStorage.getItem('momentsSurpriseShown')) {
+                              setTimeout(() => {
+                                  showMomentsSurprise();
+                                  sessionStorage.setItem('momentsSurpriseShown', 'true');
+                              }, 1000);
+                          }
+                     }
+                 }
+             );
+        }
+
+        function initPhotoGrid() {
+            const gridContainer = document.getElementById('photo-grid-container');
+            if (gridContainer.children.length > 0) return;
+
+            const photoData = {
+                "Special Days": [
+                    { src: "k1.jpg", caption: "The Day We Met" },
+                    { src: "k2.jpg", caption: "our pick together" },
+                    { src: "c3.jpg", caption: "first kiss" },
+                ],
+                "Our Trips": [
+                    { src: "k4.jpg", caption: "Today with you" },
+                    { src: "k5.jpg", caption: "Tommorow with you" },
+                    { src: "k6.jpg", caption: "Forever with you" },
+                    
+                ],
+                "Random Moments": [
+                    { src: "k9.jpg", caption: "Ur my Rose" },
+                    { src: "k7.jpg", caption: "Ur my sleep" },
+                    { src: "k3.jpg", caption: "Ur my smile" },
+                ]
+            };
+
+            for (const [title, photos] of Object.entries(photoData)) {
+                const heading = document.createElement('h3');
+                heading.className = 'photo-grid-heading';
+                heading.textContent = title;
+                gridContainer.appendChild(heading);
+
+                photos.forEach(photo => {
+                    const item = document.createElement('div');
+                    item.className = 'grid-photo-item';
+                    item.innerHTML = `
+                        <div class="grid-photo-inner">
+                            <img src="${photo.src}" alt="${photo.caption}" onerror="this.onerror=null;this.src='https://placehold.co/400x500/fbcfe8/831843?text=Memory';">
+                            <div class="grid-photo-caption">${photo.caption}</div>
+                        </div>
+                    `;
+                    gridContainer.appendChild(item);
+
+                    item.addEventListener('mousemove', (e) => {
+                        const rect = item.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const rotateY = -1 * ((x - rect.width / 2) / (rect.width / 2)) * 10;
+                        const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * 10;
+                        gsap.to(item, { rotationX: rotateX, rotationY: rotateY, duration: 0.7, ease: 'power2.out' });
+                    });
+
+                    item.addEventListener('mouseleave', () => {
+                        gsap.to(item, { rotationX: 0, rotationY: 0, duration: 0.7, ease: 'power2.out' });
+                    });
+
+                    item.addEventListener('click', () => showLightbox(photo.src, photo.caption));
+                });
+            }
+        }
+        
+        function showLightbox(src, caption) {
+            let lightbox = document.getElementById('lightbox-overlay');
+            if (!lightbox) {
+                lightbox = document.createElement('div');
+                lightbox.id = 'lightbox-overlay';
+                document.body.appendChild(lightbox);
+                lightbox.innerHTML = `
+                    <div id="lightbox-content">
+                        <img>
+                        <p></p>
+                    </div>
+                `;
+                lightbox.addEventListener('click', () => hideLightbox());
+            }
+
+            lightbox.querySelector('img').src = src;
+            lightbox.querySelector('p').textContent = caption;
+            
+            lightbox.style.visibility = 'visible';
+            gsap.to(lightbox, { opacity: 1, duration: 0.3 });
+            gsap.from(lightbox.querySelector('#lightbox-content'), { scale: 0.8, duration: 0.3, ease: 'back.out(1.7)' });
+        }
+
+        function hideLightbox() {
+            const lightbox = document.getElementById('lightbox-overlay');
+            if (lightbox) {
+                gsap.to(lightbox, { 
+                    opacity: 0, 
+                    duration: 0.3, 
+                    onComplete: () => { lightbox.style.visibility = 'hidden'; } 
+                });
+            }
+        }
+        
+        // --- NEW IMPROVED Letter Page Animation ---
+        function initLetterPage() {
+            const envelopeWrapper = document.getElementById('envelopeWrapper');
+            const instruction = document.getElementById('instruction');
+            const letterModal = document.getElementById('letterModal');
+            const closeButton = document.getElementById('closeButton');
+
+            if (!envelopeWrapper || !instruction || !letterModal || !closeButton) {
+                console.error("Letter page elements not found!");
+                return;
+            }
+
+            gsap.from(envelopeWrapper, {
+                opacity: 0, scale: 0.5, rotation: -15, duration: 1.2, ease: 'elastic.out(1, 0.75)'
+            });
+
+            const openEnvelope = () => {
+                if (letterModal.classList.contains('show')) return;
+                envelopeWrapper.classList.add('open');
+                instruction.style.opacity = '0';
+                setTimeout(() => { letterModal.classList.add('show'); }, 300); 
+            };
+
+            const closeEnvelope = () => {
+                letterModal.classList.remove('show');
+                setTimeout(() => {
+                    envelopeWrapper.classList.remove('open');
+                    instruction.style.opacity = '1';
+                }, 500);
+            };
+
+            envelopeWrapper.addEventListener('click', openEnvelope);
+            closeButton.addEventListener('click', closeEnvelope);
+            letterModal.addEventListener('click', (event) => {
+                if (event.target === letterModal) closeEnvelope();
+            });
+        }
+
+
+        // --- MODIFIED Dreams Page Logic with Notice Board ---
+        function initDreamsPage() {
+            const wrapper = document.getElementById('dream-jar-wrapper');
+            const input = document.getElementById('dream-input');
+            const addBtn = document.getElementById('add-dream-btn');
+
+            // Create the notice board instead of the jar
+            wrapper.innerHTML = '';
+            const board = document.createElement('div');
+            board.className = 'notice-board';
+            wrapper.appendChild(board);
+
+            const preloadedDreams = ["Ride to Manali", "Camping under stars", "Our cozy home", "Adopt a dog", "Cook together"];
+
+            // Renamed function for clarity
+            function addDreamToBoard(text, isPreload) {
+                const note = document.createElement('div');
+                note.className = 'dream-note';
+                note.textContent = text;
+                // Append the note to the board, not the wrapper
+                board.appendChild(note);
+
+                // Calculate position within the board
+                const boardRect = board.getBoundingClientRect();
+
+                // Target coordinates are relative to the board itself
+                const targetX = gsap.utils.random(20, board.offsetWidth - note.offsetWidth - 20);
+                const targetY = gsap.utils.random(20, board.offsetHeight - note.offsetHeight - 20);
+
+                if (isPreload) {
+                    gsap.set(note, { x: targetX, y: targetY, rotation: gsap.utils.random(-8, 8) });
+                    gsap.to(note, { opacity: 1, duration: 1 });
+                } else {
+                    const inputRect = input.getBoundingClientRect();
+                    // Start position needs to be calculated relative to the board's parent (wrapper)
+                    // then transformed into board-local coordinates
+                    const wrapperRect = wrapper.getBoundingClientRect();
+                    const startX = (inputRect.left - boardRect.left) + (inputRect.width / 2);
+                    const startY = (inputRect.top - boardRect.top) + (inputRect.height / 2);
+
+                    gsap.fromTo(note, 
+                        { x: startX, y: startY, scale: 0.1, opacity: 0 }, 
+                        { x: targetX, y: targetY, scale: 1, opacity: 1, rotation: gsap.utils.random(-8, 8), duration: 1.5, ease: 'elastic.out(1, 0.75)' }
+                    );
+                }
+
+                // Make the note draggable
+                Draggable.create(note, {
+                    type: "x,y",
+                    bounds: board, // Constrain dragging to within the notice board
+                    cursor: "grab",
+                    activeCursor: "grabbing",
+                    onDragStart: function() {
+                        gsap.to(this.target, { scale: 1.1, zIndex: 100, duration: 0.2, boxShadow: '0 5px 15px rgba(0,0,0,0.3)' }); // Enlarge on drag
+                    },
+                    onDragEnd: function() {
+                        gsap.to(this.target, { scale: 1, zIndex: 1, duration: 0.2, boxShadow: '0 3px 6px rgba(0,0,0,0.15)' }); // Return to normal size
+                    }
+                });
+            }
+
+            preloadedDreams.forEach((dream, i) => {
+                // Renamed function call
+                setTimeout(() => addDreamToBoard(dream, true), i * 300 + 500);
+            });
+
+            addBtn.addEventListener('click', () => {
+                if (input.value.trim()) {
+                    // Renamed function call
+                    addDreamToBoard(input.value.trim(), false);
+                    input.value = '';
+                }
+            });
+
+            input.addEventListener('keyup', (e) => {
+                if (e.key === 'Enter' && input.value.trim()) {
+                    addBtn.click();
+                }
+            });
+            // SCROLL ANIMATIONS FOR DREAM SECTIONS
+            const dreamSections = document.querySelectorAll('#dreams .dream-section');
+            dreamSections.forEach(section => {
+                gsap.from(section, {
+                    scrollTrigger: {
+                        trigger: section,
+                        scroller: "#dreams", // Animate within the page scroller
+                        start: 'top 85%',
+                        toggleActions: 'play none none none',
+                    },
+                    opacity: 0,
+                    y: 50,
+                    duration: 0.8,
+                    ease: 'power2.out'
+                });
+            });
+
+            // ANIMATED BUCKET LIST
+            document.querySelector('#dreams .dream-list').addEventListener('click', (e) => {
+                if(e.target.tagName === 'LI') {
+                    const isCompleted = e.target.classList.toggle('completed');
+                    gsap.to(e.target, { 
+                        opacity: isCompleted ? 0.6 : 1, 
+                        duration: 0.3 
+                    });
+                }
+            });
+        }
+        
+        // --- GAME LOGIC ---
+        function showGameMenu() {
+            clearAllGameIntervals();
+            activeGame = null;
+            document.getElementById('game-menu').style.display = 'block';
+            document.querySelectorAll('.game-container').forEach(c => c.style.display = 'none');
+        }
+
+        function startGame(gameId) {
+            activeGame = gameId;
+            document.getElementById('game-menu').style.display = 'none';
+            document.querySelectorAll('.game-container').forEach(c => c.style.display = 'none');
+            document.getElementById(`${gameId}-game`).style.display = 'block';
+            
+            switch(gameId) {
+                case 'catch-the-stars': initCatchTheStarsGame(); break;
+                case 'qualities': initQualitiesGame(); break;
+                case 'memory': initMemoryGame(); break;
+                case 'quiz': initQuizGame(); break;
+                case 'spin-the-wheel': initSpinTheWheelGame(); break;
+            }
+        }
+        
+        function initCatchTheStarsGame() {
+            const canvas = document.getElementById('game-canvas');
+            const scoreEl = document.getElementById('score');
+            const timeEl = document.getElementById('time');
+            const playAgainBtn = document.getElementById('play-again-btn');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            let score = 0;
+            let time = 30;
+            let fallingItems = [];
+            let particles = [];
+            let moon = { x: 0, y: 0, width: 80, height: 40 };
+            let isGameOver = false;
+            let backgroundStars = [];
+
+            function resizeCanvas() {
+                const container = canvas.parentElement;
+                const size = Math.min(container.clientWidth - 30, 450); 
+                canvas.width = size;
+                canvas.height = size * 1.3;
+                moon.x = canvas.width / 2 - moon.width / 2;
+                moon.y = canvas.height - 60;
+                backgroundStars = [];
+                for (let i = 0; i < 100; i++) {
+                    backgroundStars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 1.5,
+                        alpha: Math.random() * 0.5 + 0.2
+                    });
+                }
+            }
+
+            function FallingItem(x, y, size, speed, type) {
+                this.x = x; this.y = y; this.size = size; this.speed = speed; this.type = type;
+            }
+
+            FallingItem.prototype.draw = function() {
+                ctx.save(); ctx.beginPath(); ctx.shadowBlur = 10;
+                if (this.type === 'star') { ctx.fillStyle = '#fde047'; ctx.shadowColor = '#fde047';
+                } else if (this.type === 'bonus') { ctx.fillStyle = '#f472b6'; ctx.shadowColor = '#f472b6';
+                } else { ctx.fillStyle = '#a78bfa'; ctx.shadowColor = '#a78bfa'; }
+                ctx.moveTo(this.x, this.y - this.size);
+                for (let i = 0; i < 5; i++) {
+                    ctx.lineTo(this.x + Math.cos((18 + i * 72) / 180 * Math.PI) * this.size, this.y - Math.sin((18 + i * 72) / 180 * Math.PI) * this.size);
+                    ctx.lineTo(this.x + Math.cos((54 + i * 72) / 180 * Math.PI) * (this.size / 2), this.y - Math.sin((54 + i * 72) / 180 * Math.PI) * (this.size / 2));
+                }
+                ctx.closePath(); ctx.fill(); ctx.restore();
+            };
+            FallingItem.prototype.update = function() { this.y += this.speed; };
+
+            function Particle(x, y, color) {
+                this.x = x; this.y = y; this.color = color; this.size = Math.random() * 3 + 1; this.life = 1;
+                this.vx = (Math.random() - 0.5) * 4; this.vy = (Math.random() - 0.5) * 4 - 2;
+            }
+            Particle.prototype.draw = function() {
+                ctx.save(); ctx.globalAlpha = this.life; ctx.fillStyle = this.color; ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+            }
+            Particle.prototype.update = function() { this.x += this.vx; this.y += this.vy; this.life -= 0.04; }
+
+            function drawMoon() {
+                ctx.save(); ctx.fillStyle = '#f1f5f9'; ctx.shadowColor = 'white'; ctx.shadowBlur = 15;
+                ctx.beginPath(); ctx.arc(moon.x + moon.width / 2, moon.y, moon.width / 2, Math.PI, 0);
+                ctx.closePath(); ctx.fill(); ctx.restore();
+            }
+
+            function drawBackground() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                backgroundStars.forEach(star => {
+                    ctx.save(); ctx.globalAlpha = star.alpha; ctx.fillStyle = 'white'; ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+                });
+            }
+
+            function gameLoop() {
+                if (isGameOver) return;
+                drawBackground(); drawMoon();
+                fallingItems.forEach((item, index) => {
+                    item.update(); item.draw();
+                    if (item.y > canvas.height) fallingItems.splice(index, 1);
+                    if (item.y > moon.y - item.size && item.y < moon.y + moon.height && item.x > moon.x && item.x < moon.x + moon.width) {
+                        let particleColor;
+                        switch (item.type) {
+                            case 'bonus': score += 10; particleColor = '#f472b6'; break;
+                            case 'comet': score = Math.max(0, score - 5); particleColor = '#a78bfa'; break;
+                            default: score++; particleColor = '#fde047';
+                        }
+                        for(let i=0; i < 15; i++) particles.push(new Particle(item.x, item.y, particleColor));
+                        fallingItems.splice(index, 1); scoreEl.textContent = score;
+                    }
+                });
+                particles.forEach((p, index) => { p.update(); p.draw(); if (p.life <= 0) particles.splice(index, 1); });
+            }
+
+            // FIXED: Redesigned game over screen and updated score
+            function endGame() {
+                isGameOver = true;
+                clearAllGameIntervals();
+                
+                const finalScore = 143; // Set final score to 143
+                scoreEl.textContent = finalScore;
+
+                ctx.fillStyle = 'rgba(30, 41, 59, 0.7)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.textAlign = 'center'; 
+                ctx.fillStyle = 'white'; 
+                
+                ctx.shadowColor = '#f9a8d4';
+                ctx.shadowBlur = 20;
+                
+                ctx.font = `30px "Great Vibes", cursive`; 
+                ctx.fillText(`Your score is ${finalScore}`, canvas.width / 2, canvas.height / 2 - 20);
+                ctx.font = `40px "Great Vibes", cursive`; 
+                ctx.fillText(`you won me!`, canvas.width / 2, canvas.height / 2 + 30);
+                
+                ctx.shadowBlur = 0;
+                
+                playAgainBtn.style.display = 'inline-block';
+            }
+            
+            function runGame() {
+                isGameOver = false; playAgainBtn.style.display = 'none'; resizeCanvas();
+                score = 0; time = 30; fallingItems = []; particles = [];
+                scoreEl.textContent = score; timeEl.textContent = time;
+                clearAllGameIntervals();
+
+                gameIntervals.loop = setInterval(gameLoop, 1000 / 60);
+                gameIntervals.timer = setInterval(() => {
+                    time--; timeEl.textContent = time;
+                    if (time <= 0) endGame();
+                }, 1000);
+                gameIntervals.generator = setInterval(() => {
+                    if (isGameOver) return;
+                    const rand = Math.random();
+                    let type = 'star';
+                    if (rand > 0.9) type = 'bonus';
+                    else if (rand > 0.8) type = 'comet';
+                    const size = type === 'comet' ? Math.random() * 4 + 4 : Math.random() * 8 + 8;
+                    const x = Math.random() * (canvas.width - size * 2) + size;
+                    const speed = Math.random() * 2 + 1.5;
+                    fallingItems.push(new FallingItem(x, -size, size, speed, type));
+                }, 400); // Slightly faster generation
+            }
+            
+            playAgainBtn.onclick = runGame;
+            // ... inside initCatchTheStarsGame()
+
+            const moveHandler = (e) => {
+                if(isGameOver) return;
+                const rect = canvas.getBoundingClientRect();
+                // Check if it's a touch event or a mouse event to get the correct coordinate
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                
+                moon.x = clientX - rect.left - moon.width / 2;
+
+                if (moon.x < 0) moon.x = 0;
+                if (moon.x > canvas.width - moon.width) moon.x = canvas.width - moon.width;
+
+                // Prevent the page from scrolling when dragging a finger on the game canvas
+                if (e.touches) e.preventDefault();
+            };
+
+            // Add event listeners for BOTH mouse and touch movements
+            canvas.addEventListener('mousemove', moveHandler);
+            canvas.addEventListener('touchmove', moveHandler, { passive: false });
+
+            window.addEventListener('resize', resizeCanvas);
+            runGame();
+        }
+        
+        function initQualitiesGame() {
+            const grid = document.getElementById('qualities-game-grid');
+            const foundCounter = document.getElementById('qualities-found');
+            const statusMessage = document.getElementById('qualities-status-message');
+            const qualities = [
+                { text: 'Loyal', type: 'positive' }, { text: 'Kind', type: 'positive' },
+                { text: 'Funny', type: 'positive' }, { text: 'Supportive', type: 'positive' },
+                { text: 'Sincere', type: 'positive' }, { text: 'lovable', type: 'positive' },
+                { text: 'good looking', type: 'positive' }, { text: 'Patient', type: 'positive' },
+                { text: 'Honest', type: 'positive' }, { text: 'Shouts Loudly', type: 'negative' },
+                { text: 'Ignores you', type: 'negative' }, { text: 'Bad Dancer', type: 'negative' },
+                { text: 'Always Late', type: 'negative' }, { text: 'waste fellow', type: 'negative' },
+                { text: 'Bad looking', type: 'negative' }
+            ].sort(() => 0.5 - Math.random());
+            
+            let foundCount = 0;
+            grid.innerHTML = '';
+            foundCounter.textContent = '0';
+
+            qualities.forEach(q => {
+                const card = document.createElement('div');
+                card.className = 'quality-card';
+                card.textContent = q.text;
+                card.dataset.type = q.type;
+                grid.appendChild(card);
+            });
+
+            grid.onclick = (e) => {
+                const card = e.target;
+                if(!card.classList.contains('quality-card') || card.classList.contains('selected') || card.classList.contains('fading-out')) return;
+
+                if (card.dataset.type === 'positive') {
+                    card.classList.add('selected');
+                    foundCount++;
+                    foundCounter.textContent = foundCount;
+                    if (foundCount === 9) {
+                        setTimeout(() => {
+                            grid.innerHTML = `<div class="col-span-full text-center"><h3 class="font-playfair text-2xl text-pink-800">You found them all!</h3><p>You know me so well. This is why we're perfect for each other.</p></div>`;
+                            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                        }, 500);
+                    }
+                } else {
+                    card.classList.add('fading-out');
+                    gsap.to(statusMessage, { opacity: 1, duration: 0.3, onComplete: () => {
+                        gsap.to(statusMessage, { opacity: 0, duration: 0.3, delay: 1 });
+                    }});
+                }
+            };
+        }
+
+        function initMemoryGame() {
+             const grid = document.getElementById('memory-game-grid');
+             const movesEl = document.getElementById('memory-moves');
+             const icons = ['💬', '🚗', '🎂', '💔', '🧑‍🤝‍🧑', '🎁', '🐘', '💋'];
+             const cardsArray = [...icons, ...icons].sort(() => 0.5 - Math.random());
+             
+             let moves = 0;
+             let flippedCards = [];
+             let matchedPairs = 0;
+             grid.innerHTML = '';
+             movesEl.textContent = '0';
+             
+             cardsArray.forEach(icon => {
+                 const card = document.createElement('div');
+                 card.className = 'memory-card';
+                 card.dataset.icon = icon;
+                 card.innerHTML = `
+                         <div class="card-face card-front">${icon}</div>
+                         <div class="card-face card-back">♥</div>
+                 `;
+                 grid.appendChild(card);
+             });
+             
+             grid.onclick = (e) => {
+                 const card = e.target.closest('.memory-card');
+                 if(!card || card.classList.contains('flipped') || flippedCards.length === 2) return;
+                 
+                 card.classList.add('flipped');
+                 flippedCards.push(card);
+
+                 if (flippedCards.length === 2) {
+                     moves++;
+                     movesEl.textContent = moves;
+                     const [card1, card2] = flippedCards;
+                     if (card1.dataset.icon === card2.dataset.icon) {
+                         card1.classList.add('matched');
+                         card2.classList.add('matched');
+                         matchedPairs++;
+                         flippedCards = [];
+                         if (matchedPairs === icons.length) {
+                             setTimeout(() => {
+                                 grid.innerHTML = `<div class="col-span-full text-center"><h3 class="font-playfair text-2xl text-pink-800">Perfect Match!</h3><p>Just like us. You remembered everything!</p></div>`;
+                             }, 800);
+                         }
+                     } else {
+                         setTimeout(() => {
+                             card1.classList.remove('flipped');
+                             card2.classList.remove('flipped');
+                             flippedCards = [];
+                         }, 1000);
+                     }
+                 }
+             }
+        }
+        
+        function initQuizGame() {
+            const questions = [
+                { q: "What started our entire story?", o: ["A text message", "A phone call", "An Instagram prank", "A chance meeting"], a: 1 },
+                { q: "Where did we first meet in person?", o: ["A movie theater", "Ramachandran mall", "College", "A cafe"], a: 1 },
+                { q: "What date was our first picture taken?", o: ["July 21, 2025", "Jan 1, 2025", "Nov 20, 2024", "Dec 25, 2024"], a: 0 },
+                { q: "What became our special mode of transport?", o: ["Metro", "Car rides", "The bus", "Auto rickshaws"], a: 1 },
+                { q: "When did we have our first kiss?", o: ["July 4, 2025", "July 23, 2025", "Sept 1, 2025", "June 26, 2025"], a: 1 },
+                { q: "When is my birthday ? (marchipoyanu annaku please)", o: ["December 26", "December 2", "December 11", "November 5"], a: 2 },
+                { q: "What was the difficult month for us when we didn't speak?", o: ["January", "February", "March", "April"], a: 1 },
+                { q: "What did I surprise you with in Sept 2025?", o: ["A trip", "A party", "Flowers", "Handcrafted gifts & letters"], a: 3 }
+            ];
+            let currentQ = 0;
+            let score = 0;
+            
+            const questionEl = document.getElementById('quiz-question');
+            const optionsEl = document.getElementById('quiz-options');
+            const feedbackEl = document.getElementById('quiz-feedback');
+            
+            function showQuestion() {
+                if (currentQ >= questions.length) {
+                    optionsEl.innerHTML = '';
+                    feedbackEl.textContent = '';
+                    questionEl.innerHTML = `Quiz Complete!<br>You got ${score} out of ${questions.length} right!<br>You're an expert on our love story!`;
+                    return;
+                }
+                const q = questions[currentQ];
+                questionEl.textContent = q.q;
+                optionsEl.innerHTML = '';
+                feedbackEl.textContent = '';
+                q.o.forEach((option, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-option-btn';
+                    btn.textContent = option;
+                    btn.onclick = () => checkAnswer(index, btn);
+                    optionsEl.appendChild(btn);
+                });
+            }
+
+            function checkAnswer(selectedIndex, btn) {
+                 const isCorrect = selectedIndex === questions[currentQ].a;
+                 if (isCorrect) {
+                     score++;
+                     btn.classList.add('correct');
+                     feedbackEl.textContent = "That's right!";
+                     feedbackEl.style.color = '#65a30d';
+                 } else {
+                     btn.classList.add('incorrect');
+                     feedbackEl.textContent = "Not quite!";
+                      feedbackEl.style.color = '#dc2626';
+                 }
+                 document.querySelectorAll('.quiz-option-btn').forEach(b => b.disabled = true);
+                 setTimeout(() => {
+                     currentQ++;
+                     showQuestion();
+                 }, 1500);
+            }
+            showQuestion();
+        }
+
+        function initSpinTheWheelGame() {
+            const canvas = document.getElementById('wheel-canvas');
+            const spinBtn = document.getElementById('spin-btn');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const segments = [
+                { text: 'A Kiss 😘', color: '#fecdd3' }, { text: 'A Hug 🤗', color: '#fbcfe8' },
+                { text: 'A Trip ✈️', color: '#f9a8d4' }, { text: 'Movie Night 🎬', color: '#f472b6' },
+                { text: 'video call 📱', color: '#ec4899' }, { text: 'Dinner Date 🍽️', color: '#db2777' },
+                { text: 'Ice Cream 🍦', color: '#be185d' }, { text: 'My Treat 💰', color: '#9d174d' }
+            ]; 
+            const numSegments = segments.length;
+            const anglePerSegment = 360 / numSegments;
+            
+            function drawWheel() {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const radius = canvas.width / 2 - 10;
+                
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                
+                segments.forEach((segment, i) => {
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    const startAngle = (i * anglePerSegment) * Math.PI / 180;
+                    const endAngle = ((i + 1) * anglePerSegment) * Math.PI / 180;
+                    ctx.arc(0,0, radius, startAngle, endAngle);
+                    ctx.closePath();
+                    ctx.fillStyle = segment.color;
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.save();
+                    ctx.fillStyle = '#581c37';
+                    ctx.font = 'bold 14px Poppins';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const textAngle = ((i + 0.5) * anglePerSegment) * Math.PI / 180;
+                    ctx.rotate(textAngle);
+                    ctx.fillText(segment.text, radius * 0.6, 0);
+                    ctx.restore();
+                });
+                ctx.restore();
+            }
+
+            spinBtn.onclick = () => {
+                if(spinBtn.disabled) return;
+                spinBtn.disabled = true;
+                const spinAngle = Math.random() * 360 + 360 * 5; 
+                
+                gsap.to(canvas, {
+                    rotation: `+=${spinAngle}`,
+                    duration: 5,
+                    ease: 'power3.out',
+                    onComplete: () => {
+                        const finalRotation = gsap.getProperty(canvas, "rotation") % 360;
+                        const pointerAngle = 270; 
+                        const relativeAngle = (360 - finalRotation + pointerAngle) % 360;
+                        const winningIndex = Math.floor(relativeAngle / anglePerSegment);
+
+                        setTimeout(() => {
+                           showWheelResult(`<strong>${segments[winningIndex].text}</strong>!`);
+                        }, 500);
+                        spinBtn.disabled = false;
+                    }
+                });
+            };
+            drawWheel();
+        }
+        
+        function showWheelResult(text) {
+            const modal = document.getElementById('wheel-result-modal');
+            document.getElementById('wheel-result-text').innerHTML = text;
+            modal.classList.remove('hidden');
+            gsap.from(modal.querySelector('.modal-box'), { scale: 0.7, opacity: 0, duration: 0.5, ease: 'back.out(1.7)' });
+        }
+        
+        function hideWheelResult() {
+             const modal = document.getElementById('wheel-result-modal');
+             gsap.to(modal.querySelector('.modal-box'), { scale: 0.7, opacity: 0, duration: 0.3, ease: 'power2.in', onComplete: () => {
+                 modal.classList.add('hidden');
+             }});
+        }
+
+        // --- Question Page Logic ---
+        function initPlayfulNoButton() {
+            const messages = ["No annake nanna", "Okasari alochinchuko!", "Pakka na?", "AREYY EM AYINDHI NANNA NIKU!", "Please aee vyshu!", "Last chance!"];
+            let messageTimeout;
+            let isEscaping = false;
+
+            const moveButton = (e) => {
+                e.preventDefault();
+                if (!isEscaping) {
+                    isEscaping = true;
+                    noBtn.style.position = 'absolute';
+                    buttonWrapper.appendChild(noBtn);
+                }
+
+                const wrapperRect = buttonWrapper.getBoundingClientRect();
+                const btnRect = noBtn.getBoundingClientRect();
+                
+                const newTop = Math.random() * (wrapperRect.height - btnRect.height);
+                const newLeft = Math.random() * (wrapperRect.width - btnRect.width);
+
+                gsap.to(noBtn, { top: newTop, left: newLeft, duration: 0.4, ease: 'power2.out' });
+                
+                noBtnMessage.textContent = messages[Math.floor(Math.random() * messages.length)];
+                gsap.to(noBtnMessage, { opacity: 1, visibility: 'visible', duration: 0.2 });
+
+                clearTimeout(messageTimeout);
+                messageTimeout = setTimeout(() => {
+                    gsap.to(noBtnMessage, { opacity: 0, visibility: 'hidden', duration: 0.2 });
+                }, 1500);
+            };
+
+            noBtn.addEventListener('click', moveButton);
+            noBtn.addEventListener('mouseover', moveButton);
+        }
+
+        function initQuestionPage() {
+            const tl = gsap.timeline();
+            const preProposalText = document.getElementById('pre-proposal-text');
+            const ringBox = document.getElementById('ring-box-svg');
+            const proposalContainer = document.getElementById('proposal-container');
+            const questionText = document.getElementById('proposal-question');
+
+            tl.to(preProposalText, { opacity: 1, duration: 2 });
+            tl.to(ringBox, { opacity: 1, scale: 1, duration: 1, ease: 'back.out(1.7)' }, "-=0.5");
+
+            const chars = questionText.innerText.split('');
+            questionText.innerHTML = chars.map(char => `<span class="char">${char === ' ' ? '&nbsp;' : char}</span>`).join('');
+
+            ringBox.addEventListener('click', () => {
+                if (ringBox.classList.contains('open')) return;
+                ringBox.classList.add('open');
+
+                const boxRect = ringBox.getBoundingClientRect();
+                const originX = boxRect.left + boxRect.width / 2;
+                const originY = boxRect.top + boxRect.height / 2;
+
+                for (let i = 0; i < 30; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('starburst-particle');
+                    document.body.appendChild(particle);
+                    const size = Math.random() * 8 + 2;
+                    gsap.fromTo(particle, {
+                        x: originX - size / 2, y: originY - size / 2,
+                        width: size, height: size,
+                        opacity: 1
+                    }, {
+                        x: `+=${(Math.random() - 0.5) * 400}`,
+                        y: `+=${(Math.random() - 0.5) * 400}`,
+                        opacity: 0,
+                        duration: Math.random() * 1 + 0.5,
+                        ease: "power2.out",
+                        onComplete: () => particle.remove()
+                    });
+                }
+                
+                gsap.timeline()
+                  .to(preProposalText, { opacity: 0, duration: 1 })
+                  .to(proposalContainer, { opacity: 1, duration: 1 }, "-=0.5")
+                  .from(".char", {
+                      duration: 0.8,
+                      opacity: 0, scale: 0.1, y: 40,
+                      rotationX: -90,
+                      transformOrigin: "0% 50% -50",
+                      ease: "back.out",
+                      stagger: 0.05,
+                      onStart: function() {
+                          gsap.to(this.targets(), {
+                              textShadow: "0 0 20px #fff, 0 0 40px #f9a8d4, 0 0 60px #f9a8d4",
+                              duration: 1.5,
+                              ease: "power2.out",
+                              yoyo: true,
+                              repeat: -1
+                          });
+                      }
+                  }, "-=0.5");
+            }, { once: true });
+        }
+    });
+    </script>
+
+</body>
+</html>
